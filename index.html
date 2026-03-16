@@ -654,6 +654,84 @@
             .cal-grid .day-cell .hijri-day { font-size: 0.85em; }
             .tab-bar button { padding: 12px 15px; font-size: 0.85em; }
         }
+
+        /* ====== ТАСБЕҲ ====== */
+        .tasbih-dhikr-selector {
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px;
+        }
+        .dhikr-btn {
+            font-family: 'Amiri', serif; font-size: 1rem; padding: 8px 14px;
+            background: var(--white); border: 2px solid var(--green-light); border-radius: 20px;
+            color: var(--green-dark); cursor: pointer; transition: all 0.3s;
+        }
+        .dhikr-btn.active { background: var(--green-main); color: var(--white); border-color: var(--green-main); }
+        .dhikr-btn:hover { transform: scale(1.05); }
+
+        .tasbih-display {
+            text-align: center; background: linear-gradient(135deg, var(--green-dark), var(--green-main));
+            color: var(--white); border-radius: 20px; padding: 25px 20px; margin-bottom: 25px;
+            box-shadow: var(--shadow-lg);
+        }
+        .tasbih-arabic { font-family: 'Amiri', serif; font-size: 2.2rem; margin-bottom: 10px; line-height: 1.5; }
+        .tasbih-tajik { font-size: 1rem; opacity: 0.9; }
+
+        .tasbih-counter-section { text-align: center; margin-bottom: 20px; }
+        .tasbih-count {
+            font-size: 5rem; font-weight: 700; color: var(--green-dark); line-height: 1;
+            transition: transform 0.1s;
+        }
+        .tasbih-count.bump { transform: scale(1.15); }
+        .tasbih-target { font-size: 0.95rem; color: #888; margin-top: 5px; }
+        .tasbih-progress-bar {
+            width: 80%; max-width: 300px; height: 8px; background: #e0e0e0;
+            border-radius: 10px; margin: 12px auto 0; overflow: hidden;
+        }
+        .tasbih-progress-fill {
+            height: 100%; background: linear-gradient(90deg, var(--green-main), var(--gold));
+            border-radius: 10px; transition: width 0.3s; width: 0%;
+        }
+
+        .tasbih-btn {
+            display: block; margin: 0 auto 20px; width: 120px; height: 120px;
+            border-radius: 50%; border: 4px solid var(--gold);
+            background: linear-gradient(145deg, var(--green-main), var(--green-dark));
+            cursor: pointer; box-shadow: 0 6px 25px rgba(26,94,58,0.4);
+            transition: all 0.15s; position: relative;
+        }
+        .tasbih-btn:active { transform: scale(0.92); box-shadow: 0 2px 10px rgba(26,94,58,0.3); }
+        .tasbih-btn-inner { font-size: 3rem; }
+        .tasbih-btn::after {
+            content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px;
+            border: 2px solid var(--gold-light); border-radius: 50%; opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        .tasbih-btn.pulse::after { opacity: 1; transform: scale(1.1); }
+
+        .tasbih-controls {
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 20px;
+        }
+        .tasbih-ctrl {
+            padding: 10px 16px; border: 2px solid var(--green-light); border-radius: 12px;
+            background: var(--white); color: var(--green-dark); font-size: 0.9rem;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .tasbih-ctrl:hover { background: var(--green-main); color: var(--white); }
+
+        .tasbih-total {
+            text-align: center; font-size: 1.1rem; color: var(--green-dark);
+            font-weight: 600; margin-bottom: 20px; padding: 12px;
+            background: rgba(26,122,69,0.08); border-radius: 12px;
+        }
+        .tasbih-history {
+            max-width: 500px; margin: 0 auto;
+        }
+        .tasbih-history-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 15px; background: var(--white); border-radius: 10px;
+            margin-bottom: 8px; box-shadow: var(--shadow); font-size: 0.9rem;
+        }
+        .tasbih-history-item .dhikr-name { font-family: 'Amiri', serif; font-size: 1.1rem; color: var(--green-dark); }
+        .tasbih-history-item .dhikr-count { font-weight: 700; color: var(--gold); font-size: 1.2rem; }
     </style>
 </head>
 <body>
@@ -663,13 +741,14 @@
         <button class="active" onclick="switchTab('calendar')">☪ Тақвим</button>
         <button onclick="switchTab('prayer')">🕌 Намоз</button>
         <button onclick="switchTab('dua')">📖 Дуоҳо</button>
+        <button onclick="switchTab('tasbih')">📿 Тасбеҳ</button>
     </div>
 
     <header>
         <img src="icon-192.png" class="header-logo" alt="Тақвим">
         <h1>Тақвими Мусалмон</h1>
         <div class="header-arabic">تقویم المسلمان</div>
-        <p>Тақвими Ҳиҷрӣ ва Мелодӣ — Вақтҳои намоз — Дуоҳо</p>
+        <p>Тақвими Ҳиҷрӣ ва Мелодӣ — Вақтҳои намоз — Дуоҳо — Тасбеҳ</p>
     </header>
     <div class="gold-divider"></div>
 
@@ -857,6 +936,51 @@
 
     </div>
 
+    <!-- ==================== САҲИФАИ ТАСБЕҲ ==================== -->
+    <div class="page" id="pageTasbih">
+        <h2 style="text-align:center; color:var(--green-dark); font-size:1.5rem; margin-bottom:20px;">📿 Тасбеҳ</h2>
+
+        <div class="tasbih-dhikr-selector">
+            <button class="dhikr-btn active" onclick="selectDhikr(0)">سُبْحَانَ اللَّهِ</button>
+            <button class="dhikr-btn" onclick="selectDhikr(1)">الْحَمْدُ لِلَّهِ</button>
+            <button class="dhikr-btn" onclick="selectDhikr(2)">اللَّهُ أَكْبَرُ</button>
+            <button class="dhikr-btn" onclick="selectDhikr(3)">لَا إِلَٰهَ إِلَّا اللَّهُ</button>
+            <button class="dhikr-btn" onclick="selectDhikr(4)">أَسْتَغْفِرُ اللَّهَ</button>
+            <button class="dhikr-btn" onclick="selectDhikr(5)">لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ</button>
+            <button class="dhikr-btn" onclick="selectDhikr(6)">صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ</button>
+        </div>
+
+        <div class="tasbih-display">
+            <div class="tasbih-arabic" id="tasbihArabic">سُبْحَانَ اللَّهِ</div>
+            <div class="tasbih-tajik" id="tasbihTajik">Субҳоналлоҳ — Пок аст Худо</div>
+        </div>
+
+        <div class="tasbih-counter-section">
+            <div class="tasbih-count" id="tasbihCount">0</div>
+            <div class="tasbih-target">Ҳадаф: <span id="tasbihTarget">33</span></div>
+            <div class="tasbih-progress-bar">
+                <div class="tasbih-progress-fill" id="tasbihProgress"></div>
+            </div>
+        </div>
+
+        <button class="tasbih-btn" id="tasbihBtn" onclick="tasbihClick()">
+            <span class="tasbih-btn-inner">📿</span>
+        </button>
+
+        <div class="tasbih-controls">
+            <button class="tasbih-ctrl" onclick="tasbihReset()">🔄 Аз нав</button>
+            <button class="tasbih-ctrl" onclick="changeTarget()">🎯 Ҳадаф</button>
+            <button class="tasbih-ctrl" onclick="toggleVibrate()">📳 <span id="vibrateLabel">Ларзиш ✓</span></button>
+            <button class="tasbih-ctrl" onclick="toggleSound()">🔊 <span id="soundLabel">Садо ✓</span></button>
+        </div>
+
+        <div class="tasbih-total">
+            Ҷамъи умумӣ: <span id="tasbihTotal">0</span>
+        </div>
+
+        <div class="tasbih-history" id="tasbihHistory"></div>
+    </div>
+
     <div class="gold-divider"></div>
     <footer>
         <div class="footer-bismillah">﷽</div>
@@ -866,17 +990,20 @@
 
     <script>
         // ===================== ТАБҲО =====================
-        const PAGES = ['calendar', 'prayer', 'dua'];
+        const PAGES = ['calendar', 'prayer', 'dua', 'tasbih'];
         function switchTab(tab) {
             document.getElementById('pageCalendar').classList.toggle('active', tab === 'calendar');
             document.getElementById('pagePrayer').classList.toggle('active', tab === 'prayer');
             document.getElementById('pageDua').classList.toggle('active', tab === 'dua');
+            document.getElementById('pageTasbih').classList.toggle('active', tab === 'tasbih');
             let btns = document.querySelectorAll('.tab-bar button');
             btns[0].classList.toggle('active', tab === 'calendar');
             btns[1].classList.toggle('active', tab === 'prayer');
             btns[2].classList.toggle('active', tab === 'dua');
+            btns[3].classList.toggle('active', tab === 'tasbih');
             if (tab === 'prayer') { showPrayerDate(); showPrayers(); showWeek(); updateClock(); renderWorldClocks(); initQibla(); }
             if (tab === 'dua') { renderDuas(); }
+            if (tab === 'tasbih') { loadTasbihState(); }
             window.scrollTo(0, 0);
         }
 
@@ -1788,6 +1915,149 @@
         document.addEventListener('click', () => {
             document.querySelectorAll('.show-tip').forEach(c => c.classList.remove('show-tip'));
         });
+
+        // ===================== ТАСБЕҲ =====================
+        const DHIKR_LIST = [
+            { arabic: 'سُبْحَانَ اللَّهِ', tajik: 'Субҳоналлоҳ — Пок аст Худо', target: 33 },
+            { arabic: 'الْحَمْدُ لِلَّهِ', tajik: 'Алҳамдулиллоҳ — Ҳамду сано Худоро', target: 33 },
+            { arabic: 'اللَّهُ أَكْبَرُ', tajik: 'Аллоҳу Акбар — Худо бузургтарин аст', target: 34 },
+            { arabic: 'لَا إِلَٰهَ إِلَّا اللَّهُ', tajik: 'Ло илоҳа иллаллоҳ — Нест маъбуде ба ҷуз Худо', target: 100 },
+            { arabic: 'أَسْتَغْفِرُ اللَّهَ', tajik: 'Астағфируллоҳ — Омурзиш металабам аз Худо', target: 100 },
+            { arabic: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ', tajik: 'Ло ҳавла ва ло қуввата илло биллоҳ — Нест қувват магар аз Худо', target: 33 },
+            { arabic: 'صَلَّى اللَّهُ عَلَيْهِ وَسَلَّمَ', tajik: 'Саллаллоҳу алайҳи вассаллам — Дуруд бар Паёмбар (с)', target: 100 },
+        ];
+
+        let currentDhikr = 0;
+        let tasbihCount = 0;
+        let tasbihTarget = 33;
+        let tasbihVibrate = true;
+        let tasbihSound = true;
+        let tasbihTotalAll = 0;
+        let tasbihHistory = [];
+
+        function loadTasbihState() {
+            try {
+                const saved = localStorage.getItem('tasbih_state');
+                if (saved) {
+                    const s = JSON.parse(saved);
+                    tasbihTotalAll = s.totalAll || 0;
+                    tasbihHistory = s.history || [];
+                }
+            } catch(e) {}
+            document.getElementById('tasbihTotal').textContent = tasbihTotalAll;
+            renderTasbihHistory();
+        }
+
+        function saveTasbihState() {
+            try {
+                localStorage.setItem('tasbih_state', JSON.stringify({
+                    totalAll: tasbihTotalAll,
+                    history: tasbihHistory.slice(0, 50)
+                }));
+            } catch(e) {}
+        }
+
+        function selectDhikr(idx) {
+            currentDhikr = idx;
+            tasbihCount = 0;
+            tasbihTarget = DHIKR_LIST[idx].target;
+            document.getElementById('tasbihArabic').textContent = DHIKR_LIST[idx].arabic;
+            document.getElementById('tasbihTajik').textContent = DHIKR_LIST[idx].tajik;
+            document.getElementById('tasbihCount').textContent = '0';
+            document.getElementById('tasbihTarget').textContent = tasbihTarget;
+            document.getElementById('tasbihProgress').style.width = '0%';
+            document.querySelectorAll('.dhikr-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+        }
+
+        function tasbihClick() {
+            tasbihCount++;
+            tasbihTotalAll++;
+            const countEl = document.getElementById('tasbihCount');
+            countEl.textContent = tasbihCount;
+            countEl.classList.add('bump');
+            setTimeout(() => countEl.classList.remove('bump'), 100);
+
+            const pct = Math.min((tasbihCount / tasbihTarget) * 100, 100);
+            document.getElementById('tasbihProgress').style.width = pct + '%';
+            document.getElementById('tasbihTotal').textContent = tasbihTotalAll;
+
+            const btn = document.getElementById('tasbihBtn');
+            btn.classList.add('pulse');
+            setTimeout(() => btn.classList.remove('pulse'), 300);
+
+            if (tasbihVibrate && navigator.vibrate) navigator.vibrate(30);
+
+            if (tasbihSound) {
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.value = tasbihCount === tasbihTarget ? 880 : 600;
+                    gain.gain.value = 0.08;
+                    osc.start();
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+                    osc.stop(ctx.currentTime + 0.15);
+                } catch(e) {}
+            }
+
+            if (tasbihCount === tasbihTarget) {
+                tasbihHistory.unshift({
+                    dhikr: DHIKR_LIST[currentDhikr].arabic,
+                    count: tasbihTarget,
+                    time: new Date().toLocaleTimeString('tg-TJ', { hour: '2-digit', minute: '2-digit' })
+                });
+                saveTasbihState();
+                renderTasbihHistory();
+                if (tasbihVibrate && navigator.vibrate) navigator.vibrate([100, 50, 100]);
+                setTimeout(() => {
+                    tasbihCount = 0;
+                    document.getElementById('tasbihCount').textContent = '0';
+                    document.getElementById('tasbihProgress').style.width = '0%';
+                }, 800);
+            } else {
+                saveTasbihState();
+            }
+        }
+
+        function tasbihReset() {
+            tasbihCount = 0;
+            document.getElementById('tasbihCount').textContent = '0';
+            document.getElementById('tasbihProgress').style.width = '0%';
+        }
+
+        function changeTarget() {
+            const targets = [33, 34, 99, 100, 500, 1000];
+            const idx = targets.indexOf(tasbihTarget);
+            tasbihTarget = targets[(idx + 1) % targets.length];
+            document.getElementById('tasbihTarget').textContent = tasbihTarget;
+            const pct = Math.min((tasbihCount / tasbihTarget) * 100, 100);
+            document.getElementById('tasbihProgress').style.width = pct + '%';
+        }
+
+        function toggleVibrate() {
+            tasbihVibrate = !tasbihVibrate;
+            document.getElementById('vibrateLabel').textContent = 'Ларзиш ' + (tasbihVibrate ? '✓' : '✗');
+        }
+
+        function toggleSound() {
+            tasbihSound = !tasbihSound;
+            document.getElementById('soundLabel').textContent = 'Садо ' + (tasbihSound ? '✓' : '✗');
+        }
+
+        function renderTasbihHistory() {
+            const el = document.getElementById('tasbihHistory');
+            if (!tasbihHistory.length) { el.innerHTML = ''; return; }
+            el.innerHTML = '<h3 style="text-align:center; color:var(--green-dark); margin-bottom:10px;">Таърихи зикр</h3>' +
+                tasbihHistory.slice(0, 20).map(h =>
+                    `<div class="tasbih-history-item">
+                        <span class="dhikr-name">${h.dhikr}</span>
+                        <span>${h.time}</span>
+                        <span class="dhikr-count">${h.count}×</span>
+                    </div>`
+                ).join('');
+        }
 
         // ===================== ОҒОЗ =====================
         initYearSelect();
