@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="tg" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a5e3a">
+    <meta name="description" content="Тақвими Мусалмон — Ҳиҷрӣ ва Мелодӣ — Вақтҳои намоз — Дуоҳо">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <title>Тақвими Мусалмон</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;600;700&family=Amiri:wght@400;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --green-dark: #0d4a2a;
+            --green-main: #1a7a45;
+            --green-light: #4caf7d;
+            --gold: #c9a84c;
+            --gold-light: #f0d68a;
+            --bg: #f7f3eb;
+            --text: #2c2c2c;
+            --white: #ffffff;
+            --shadow: 0 4px 20px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: 'Noto Sans', Arial, sans-serif;
+            background: var(--bg);
+            background-image:
+                radial-gradient(circle at 20% 50%, rgba(26,122,69,0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(201,168,76,0.04) 0%, transparent 50%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Табҳо */
+        .tab-bar {
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-main) 100%);
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tab-bar button {
+            background: none;
+            border: none;
+            color: var(--white);
+            padding: 14px 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+            cursor: pointer;
+            opacity: 0.65;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            font-family: inherit;
+            letter-spacing: 0.3px;
+        }
+
+        .tab-bar button:hover { opacity: 0.9; }
+        .tab-bar button.active { opacity: 1; border-bottom: 3px solid var(--gold); background: rgba(255,255,255,0.08); }
+
+        /* Сарлавҳа */
+        header {
+            background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-main) 50%, #1a6b3d 100%);
+            width: 100%;
+            padding: 30px 20px 25px;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Нақши исломӣ дар header */
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(255,255,255,0.015) 20px, rgba(255,255,255,0.015) 40px),
+                repeating-linear-gradient(-45deg, transparent, transparent 20px, rgba(255,255,255,0.015) 20px, rgba(255,255,255,0.015) 40px);
+        }
+
+        header::after {
+            content: '﷽';
+            position: absolute;
+            font-size: 60px;
+            opacity: 0.06;
+            top: -5px;
+            right: 10px;
+            font-family: 'Amiri', serif;
+        }
+
+        .header-logo {
+            width: 60px; height: 60px; border-radius: 50%;
+            border: 3px solid var(--gold);
+            margin: 0 auto 10px;
+            box-shadow: 0 0 20px rgba(201,168,76,0.3);
+        }
+
+        header h1 { font-size: 1.7em; font-weight: 700; margin-bottom: 3px; text-shadow: 0 2px 4px rgba(0,0,0,0.2); position: relative; }
+        header .header-arabic { font-family: 'Amiri', serif; font-size: 1.1em; opacity: 0.85; margin-bottom: 5px; position: relative; }
+        header p { font-size: 0.9em; opacity: 0.75; position: relative; }
+
+        /* Тиллоии ҷудокунанда */
+        .gold-divider {
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, transparent, var(--gold), var(--gold-light), var(--gold), transparent);
+        }
+
+        .install-btn {
+            display: none;
+            background: var(--gold);
+            color: var(--white);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 30px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px auto;
+            box-shadow: var(--shadow);
+        }
+        .install-btn:hover { background: #c4982e; }
+
+        /* Саҳифаҳо */
+        .page { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .page.active { display: flex; }
+
+        /* === ТАҚВИМ === */
+        .today-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 30px 25px;
+            margin: 20px 15px;
+            max-width: 500px;
+            width: calc(100% - 30px);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+            border-top: 5px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+        }
+        .today-card::before {
+            content: '☪';
+            position: absolute;
+            font-size: 120px;
+            opacity: 0.03;
+            top: -20px;
+            right: -15px;
+        }
+        .today-card .hijri-date { font-size: 2.5em; font-weight: 700; color: var(--green-dark); margin: 10px 0; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .today-card .hijri-month { font-size: 1.4em; color: var(--green-main); font-weight: 600; }
+        .today-card .hijri-year { font-size: 1.1em; color: var(--gold); font-weight: 600; margin-bottom: 12px; }
+        .today-card .miladi-date { font-size: 1em; color: #777; padding-top: 12px; border-top: 2px solid #f0ece4; }
+        .today-card .day-name { font-size: 1.15em; color: var(--green-main); font-weight: 600; margin-bottom: 5px; letter-spacing: 0.5px; }
+
+        .calendar-section {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 20px;
+            margin: 0 15px 20px;
+            max-width: 500px;
+            width: calc(100% - 30px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .cal-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .nav-btn {
+            background: var(--green-main);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.2em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            font-family: inherit;
+        }
+        .nav-btn:hover { background: var(--green-dark); }
+
+        .cal-nav .month-title { text-align: center; }
+        .cal-nav .month-title .hijri { font-size: 1.1em; font-weight: 700; color: var(--green-dark); }
+        .cal-nav .month-title .miladi { font-size: 0.8em; color: #999; }
+
+        .year-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .year-nav button {
+            background: var(--gold);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 1em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: inherit;
+        }
+        .year-nav button:hover { background: #c4982e; }
+
+        .year-nav select {
+            background: var(--white);
+            border: 2px solid var(--green-main);
+            border-radius: 8px;
+            padding: 5px 10px;
+            font-size: 1em;
+            font-weight: 600;
+            color: var(--green-dark);
+            cursor: pointer;
+            outline: none;
+        }
+        .year-nav select:focus { border-color: var(--gold); }
+        .year-nav .year-label { font-size: 0.85em; color: #888; }
+
+        .today-btn {
+            display: block;
+            margin: 5px auto 10px;
+            background: none;
+            border: 1px solid var(--green-main);
+            color: var(--green-main);
+            border-radius: 15px;
+            padding: 4px 16px;
+            font-size: 0.8em;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .today-btn:hover { background: var(--green-main); color: var(--white); }
+
+        .cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .cal-grid .day-header { text-align: center; font-weight: 600; font-size: 0.8em; color: var(--green-main); padding: 8px 0; }
+        .cal-grid .day-cell {
+            text-align: center; padding: 8px 2px; border-radius: 10px; cursor: pointer;
+            transition: all 0.2s; min-height: 50px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        .cal-grid .day-cell:hover { background: #e8f5e9; }
+        .cal-grid .day-cell.today { background: var(--green-main); color: var(--white); }
+        .cal-grid .day-cell.today .greg-small { color: rgba(255,255,255,0.8); }
+        .cal-grid .day-cell .hijri-day { font-weight: 600; font-size: 1em; }
+        .cal-grid .day-cell .greg-small { font-size: 0.65em; color: #aaa; margin-top: 2px; }
+        .cal-grid .day-cell.holiday { color: var(--gold); font-weight: 700; }
+        .cal-grid .day-cell.today.holiday { background: linear-gradient(135deg, var(--green-main), var(--gold)); color: var(--white); }
+        .cal-grid .day-cell.empty { cursor: default; }
+        .cal-grid .day-cell.juma { color: var(--green-dark); font-weight: 700; }
+        .cal-grid .day-cell.today.juma { color: var(--white); }
+
+        /* Tooltip */
+        .day-cell { position: relative; }
+        .day-tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--green-dark);
+            color: var(--white);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.75em;
+            white-space: nowrap;
+            z-index: 50;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            pointer-events: none;
+            line-height: 1.5;
+            text-align: center;
+            max-width: 200px;
+            white-space: normal;
+        }
+        .day-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: var(--green-dark);
+        }
+        .day-tooltip.holiday-tip { background: var(--gold); }
+        .day-tooltip.holiday-tip::after { border-top-color: var(--gold); }
+        .day-cell:hover .day-tooltip,
+        .day-cell.show-tip .day-tooltip { display: block; }
+
+        /* Mini tooltip */
+        .mini-grid .mday { position: relative; cursor: pointer; }
+        .mday-tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 4px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--green-dark);
+            color: var(--white);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.7em;
+            z-index: 50;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+            pointer-events: none;
+            line-height: 1.4;
+            text-align: center;
+            max-width: 180px;
+            white-space: normal;
+        }
+        .mday-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--green-dark);
+        }
+        .mday-tooltip.holiday-tip { background: var(--gold); }
+        .mday-tooltip.holiday-tip::after { border-top-color: var(--gold); }
+        .mday:hover .mday-tooltip,
+        .mday.show-tip .mday-tooltip { display: block; }
+
+        .full-year-section { max-width: 1100px; width: calc(100% - 30px); margin: 0 15px 20px; }
+        .full-year-section h2 { text-align: center; color: var(--green-dark); margin-bottom: 15px; font-size: 1.2em; }
+
+        .toggle-year-btn {
+            display: block; width: 100%; padding: 14px; border: 2px dashed var(--green-main);
+            background: var(--white); color: var(--green-main); border-radius: 12px;
+            font-size: 1em; font-weight: 600; cursor: pointer; font-family: inherit;
+            transition: all 0.2s; margin-bottom: 15px;
+        }
+        .toggle-year-btn:hover { background: var(--green-main); color: var(--white); }
+        .toggle-year-btn.open { background: var(--green-main); color: var(--white); border-style: solid; }
+
+        .full-year-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .mini-month { background: var(--white); border-radius: 16px; padding: 15px; box-shadow: var(--shadow-lg); border-top: 3px solid var(--green-main); }
+        .mini-month-title { text-align: center; font-weight: 700; color: var(--green-dark); margin-bottom: 8px; font-size: 1em; }
+        .mini-month-title small { display: block; font-weight: 400; color: #999; font-size: 0.75em; }
+
+        .mini-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .mini-grid .mday-header { text-align: center; font-size: 0.65em; color: var(--green-main); font-weight: 600; padding: 4px 0; }
+        .mini-grid .mday { text-align: center; padding: 4px 1px; border-radius: 6px; font-size: 0.8em; min-height: 28px; display: flex; align-items: center; justify-content: center; }
+        .mini-grid .mday.today { background: var(--green-main); color: var(--white); border-radius: 50%; font-weight: 700; }
+        .mini-grid .mday.holiday { color: var(--gold); font-weight: 700; }
+        .mini-grid .mday.juma { color: var(--green-dark); font-weight: 700; }
+
+        .holidays-section {
+            background: var(--white); border-radius: 20px; padding: 20px;
+            margin: 0 15px 20px; max-width: 500px; width: calc(100% - 30px); box-shadow: var(--shadow);
+        }
+        .holidays-section h2 { text-align: center; color: var(--green-dark); margin-bottom: 15px; font-size: 1.2em; }
+        .holiday-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 12px; border-bottom: 1px solid #f0ece4; border-radius: 10px; margin-bottom: 2px; transition: background 0.2s; }
+        .holiday-item:hover { background: #faf8f3; }
+        .holiday-item:last-child { border-bottom: none; }
+        .holiday-item .h-name { font-weight: 600; font-size: 0.95em; }
+        .holiday-item .h-date { font-size: 0.85em; color: var(--green-main); text-align: right; }
+        .holiday-item .h-date small { display: block; color: #aaa; font-size: 0.85em; }
+
+        /* === НАМОЗ === */
+        .city-section {
+            background: var(--white); border-radius: 20px; padding: 20px;
+            margin: 20px 15px 15px; max-width: 500px; width: calc(100% - 30px);
+            box-shadow: var(--shadow); text-align: center;
+        }
+        .city-section label { font-weight: 600; color: var(--green-dark); margin-right: 10px; }
+        .city-section select {
+            background: var(--white); border: 2px solid var(--green-main); border-radius: 8px;
+            padding: 8px 15px; font-size: 1em; color: var(--green-dark); cursor: pointer; outline: none;
+        }
+        .city-section select:focus { border-color: var(--gold); }
+        .city-coords { margin-top: 8px; font-size: 0.8em; color: #aaa; }
+
+        .date-card {
+            background: var(--white); border-radius: 20px; padding: 20px;
+            margin: 0 15px 15px; max-width: 500px; width: calc(100% - 30px);
+            box-shadow: var(--shadow); text-align: center; border-top: 4px solid var(--gold);
+        }
+        .date-card .main-date { font-size: 1.2em; font-weight: 700; color: var(--green-dark); }
+        .date-card .sub-date { font-size: 0.9em; color: #888; margin-top: 5px; }
+
+        .prayer-card {
+            background: var(--white); border-radius: 20px; padding: 20px;
+            margin: 0 15px 15px; max-width: 500px; width: calc(100% - 30px); box-shadow: var(--shadow);
+        }
+        .prayer-card h2 { text-align: center; color: var(--green-dark); margin-bottom: 15px; font-size: 1.2em; }
+
+        .prayer-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 15px; border-radius: 12px; margin-bottom: 8px; transition: all 0.3s;
+        }
+        .prayer-row:last-child { margin-bottom: 0; }
+        .prayer-row .prayer-icon { font-size: 1.5em; margin-right: 12px; }
+        .prayer-row .prayer-info { flex: 1; }
+        .prayer-row .prayer-name { font-weight: 700; font-size: 1.05em; }
+        .prayer-row .prayer-arabic { font-size: 0.8em; color: #aaa; }
+        .prayer-row .prayer-time { font-size: 1.4em; font-weight: 700; color: var(--green-dark); font-variant-numeric: tabular-nums; }
+
+        .prayer-row.fajr { background: linear-gradient(135deg, #e8f0fe, #f0f4ff); }
+        .prayer-row.sunrise { background: linear-gradient(135deg, #fff8e1, #fff3cd); }
+        .prayer-row.dhuhr { background: linear-gradient(135deg, #e8f5e9, #f1f8e9); }
+        .prayer-row.asr { background: linear-gradient(135deg, #fff3e0, #ffecd2); }
+        .prayer-row.maghrib { background: linear-gradient(135deg, #fce4ec, #f8d7da); }
+        .prayer-row.isha { background: linear-gradient(135deg, #ede7f6, #e8def8); }
+        .prayer-row.active { box-shadow: 0 0 0 3px var(--gold); transform: scale(1.02); }
+
+        .week-card {
+            background: var(--white); border-radius: 20px; padding: 20px;
+            margin: 0 15px 15px; max-width: 600px; width: calc(100% - 30px);
+            box-shadow: var(--shadow); overflow-x: auto;
+        }
+        .week-card h2 { text-align: center; color: var(--green-dark); margin-bottom: 15px; font-size: 1.1em; }
+        .week-table { width: 100%; border-collapse: collapse; font-size: 0.8em; }
+        .week-table th { background: var(--green-main); color: var(--white); padding: 8px 5px; font-weight: 600; font-size: 0.85em; }
+        .week-table td { padding: 6px 5px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+        .week-table tr.today-row { background: #e8f5e9; font-weight: 700; }
+        .week-table .day-col { font-weight: 600; color: var(--green-dark); text-align: left; }
+
+        .info-card {
+            background: var(--white); border-radius: 20px; padding: 20px;
+            margin: 0 15px 20px; max-width: 500px; width: calc(100% - 30px); box-shadow: var(--shadow);
+        }
+        .info-card h3 { color: var(--green-dark); margin-bottom: 10px; font-size: 1em; }
+        .info-card p { font-size: 0.85em; color: #777; line-height: 1.6; }
+
+        /* === СОАТ === */
+        .clock-card {
+            background: var(--white); border-radius: 20px; padding: 25px;
+            margin: 20px 15px 15px; max-width: 500px; width: calc(100% - 30px);
+            box-shadow: var(--shadow); text-align: center; border-top: 4px solid var(--gold);
+        }
+        .clock-main {
+            font-size: 3.5em; font-weight: 700; color: var(--green-dark);
+            font-variant-numeric: tabular-nums; letter-spacing: 2px;
+        }
+        .clock-seconds { font-size: 0.5em; color: var(--gold); vertical-align: super; }
+        .clock-date { font-size: 1em; color: #888; margin-top: 5px; }
+        .clock-label { font-size: 0.85em; color: var(--green-main); font-weight: 600; margin-bottom: 5px; }
+
+        .world-clock-card {
+            background: var(--white); border-radius: 20px; padding: 20px;
+            margin: 0 15px 15px; max-width: 500px; width: calc(100% - 30px);
+            box-shadow: var(--shadow);
+        }
+        .world-clock-card h2 { text-align: center; color: var(--green-dark); margin-bottom: 15px; font-size: 1.1em; }
+
+        .world-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 12px; border-radius: 10px; margin-bottom: 6px;
+            transition: background 0.2s;
+        }
+        .world-row:hover { background: #f5f5f5; }
+        .world-row:last-child { margin-bottom: 0; }
+        .world-row .w-city { font-weight: 600; font-size: 0.95em; }
+        .world-row .w-country { font-size: 0.75em; color: #aaa; }
+        .world-row .w-time {
+            font-size: 1.3em; font-weight: 700; color: var(--green-dark);
+            font-variant-numeric: tabular-nums;
+        }
+        .world-row .w-diff { font-size: 0.7em; color: #bbb; }
+        .world-row.current { background: #e8f5e9; }
+        .world-row .w-icon { font-size: 1.2em; margin-right: 10px; }
+        .world-row .w-left { display: flex; align-items: center; }
+        .world-row .w-right { text-align: right; }
+
+        /* === ҚИБЛА === */
+        .qibla-card {
+            background: var(--white); border-radius: 20px; padding: 25px;
+            margin: 0 15px 15px; max-width: 500px; width: calc(100% - 30px);
+            box-shadow: var(--shadow); text-align: center;
+        }
+        .qibla-card h2 { color: var(--green-dark); margin-bottom: 15px; font-size: 1.2em; }
+
+        .qibla-compass {
+            position: relative; width: 260px; height: 260px; margin: 0 auto 20px;
+        }
+
+        .compass-ring {
+            width: 260px; height: 260px; border-radius: 50%;
+            border: 4px solid var(--green-main);
+            position: relative;
+            background: radial-gradient(circle, #f9f6f0 0%, #ede8dc 100%);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15), inset 0 2px 10px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .compass-dir {
+            position: absolute; font-weight: 700; font-size: 0.85em; color: var(--green-dark);
+        }
+        .compass-dir.n { top: 8px; left: 50%; transform: translateX(-50%); color: #c0392b; }
+        .compass-dir.s { bottom: 8px; left: 50%; transform: translateX(-50%); }
+        .compass-dir.e { right: 10px; top: 50%; transform: translateY(-50%); }
+        .compass-dir.w { left: 10px; top: 50%; transform: translateY(-50%); }
+
+        .qibla-arrow {
+            position: absolute; top: 50%; left: 50%;
+            width: 4px; height: 100px;
+            margin-left: -2px; margin-top: -100px;
+            transform-origin: bottom center;
+            transition: transform 0.5s ease;
+        }
+        .qibla-arrow::before {
+            content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+            border-left: 12px solid transparent; border-right: 12px solid transparent;
+            border-bottom: 25px solid var(--gold);
+        }
+        .qibla-arrow::after {
+            content: ''; position: absolute; top: 25px; left: 50%; transform: translateX(-50%);
+            width: 4px; height: 75px; background: var(--gold); border-radius: 2px;
+        }
+
+        .compass-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+            width: 16px; height: 16px; border-radius: 50%;
+            background: var(--green-dark); border: 3px solid var(--gold);
+            z-index: 5;
+        }
+
+        .kaaba-icon {
+            position: absolute; transform-origin: bottom center;
+            font-size: 1.6em; z-index: 3;
+        }
+
+        .qibla-info { margin-top: 10px; }
+        .qibla-degrees { font-size: 2em; font-weight: 700; color: var(--green-dark); }
+        .qibla-degrees small { font-size: 0.4em; color: #888; font-weight: 400; }
+        .qibla-direction { font-size: 0.95em; color: var(--green-main); font-weight: 600; margin: 5px 0; }
+        .qibla-distance { font-size: 0.85em; color: #aaa; }
+
+        .qibla-btn {
+            display: inline-block; background: var(--green-main); color: var(--white);
+            border: none; border-radius: 25px; padding: 12px 25px; font-size: 0.95em;
+            font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 15px;
+            transition: background 0.2s;
+        }
+        .qibla-btn:hover { background: var(--green-dark); }
+        .qibla-btn:disabled { background: #ccc; cursor: not-allowed; }
+
+        .qibla-status {
+            font-size: 0.8em; color: #888; margin-top: 10px; min-height: 20px;
+        }
+        .qibla-status.error { color: #c0392b; }
+        .qibla-status.success { color: var(--green-main); }
+
+        .compass-note {
+            font-size: 0.75em; color: #bbb; margin-top: 10px; line-height: 1.4;
+        }
+
+        /* === ДУОҲО === */
+        .dua-header-card {
+            background: var(--white); border-radius: 20px; padding: 25px;
+            margin: 20px 15px 15px; max-width: 500px; width: calc(100% - 30px);
+            box-shadow: var(--shadow); text-align: center; border-top: 4px solid var(--gold);
+        }
+        .dua-header-card h2 { color: var(--green-dark); margin-bottom: 5px; }
+        .dua-header-card p { color: #888; font-size: 0.9em; }
+
+        .dua-filter {
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+            margin: 0 15px 15px; max-width: 500px; width: calc(100% - 30px);
+        }
+        .filter-btn {
+            background: var(--white); border: 2px solid #ddd; border-radius: 20px;
+            padding: 6px 16px; font-size: 0.85em; cursor: pointer; font-family: inherit;
+            color: var(--text); transition: all 0.2s;
+        }
+        .filter-btn:hover { border-color: var(--green-main); color: var(--green-main); }
+        .filter-btn.active { background: var(--green-main); color: var(--white); border-color: var(--green-main); }
+
+        .dua-card {
+            background: var(--white); border-radius: 20px; padding: 20px;
+            margin: 0 15px 15px; max-width: 500px; width: calc(100% - 30px);
+            box-shadow: var(--shadow); transition: all 0.3s;
+        }
+        .dua-card .dua-number {
+            display: inline-block; background: var(--green-main); color: var(--white);
+            width: 28px; height: 28px; border-radius: 50%; text-align: center;
+            line-height: 28px; font-size: 0.8em; font-weight: 700; margin-bottom: 10px;
+        }
+        .dua-card .dua-title {
+            font-weight: 700; color: var(--green-dark); font-size: 1.05em; margin-bottom: 12px;
+        }
+        .dua-card .dua-arabic {
+            font-size: 1.4em; line-height: 2.2; text-align: right; direction: rtl;
+            color: var(--green-dark); margin-bottom: 15px; padding: 20px;
+            background: linear-gradient(135deg, #faf8f2, #f3eedf);
+            border-radius: 14px; font-family: 'Amiri', 'Traditional Arabic', serif;
+            border: 1px solid rgba(201,168,76,0.2);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .dua-card .dua-tajik {
+            font-size: 0.95em; color: var(--green-dark); line-height: 1.7;
+            margin-bottom: 10px; padding: 10px; background: #e8f5e9; border-radius: 8px;
+            border-left: 3px solid var(--green-main);
+        }
+        .dua-card .dua-reference {
+            font-size: 0.8em; color: var(--gold); font-weight: 600; text-align: right;
+        }
+        .dua-card .dua-category {
+            display: inline-block; background: var(--gold); color: var(--white);
+            padding: 2px 10px; border-radius: 10px; font-size: 0.7em; font-weight: 600;
+            margin-left: 8px; vertical-align: middle;
+        }
+
+        footer {
+            text-align: center; padding: 25px 20px; color: #999; font-size: 0.8em;
+            width: 100%; background: rgba(255,255,255,0.5);
+        }
+        .footer-bismillah { font-family: 'Amiri', serif; font-size: 1.8em; color: var(--gold); margin-bottom: 8px; }
+        .footer-version { font-size: 0.75em; color: #ccc; margin-top: 5px; }
+
+        @media (min-width: 768px) {
+            header h1 { font-size: 2.4em; }
+            header .header-arabic { font-size: 1.3em; }
+            .today-card .hijri-date { font-size: 3em; }
+            .header-logo { width: 70px; height: 70px; }
+        }
+        @media (max-width: 360px) {
+            .cal-grid .day-cell { padding: 5px 1px; min-height: 40px; }
+            .cal-grid .day-cell .hijri-day { font-size: 0.85em; }
+            .tab-bar button { padding: 12px 15px; font-size: 0.85em; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Табҳо -->
+    <div class="tab-bar">
+        <button class="active" onclick="switchTab('calendar')">☪ Тақвим</button>
+        <button onclick="switchTab('prayer')">🕌 Намоз</button>
+        <button onclick="switchTab('dua')">📖 Дуоҳо</button>
+    </div>
+
+    <header>
+        <img src="icon-192.png" class="header-logo" alt="Тақвим">
+        <h1>Тақвими Мусалмон</h1>
+        <div class="header-arabic">تقویم المسلمان</div>
+        <p>Тақвими Ҳиҷрӣ ва Мелодӣ — Вақтҳои намоз — Дуоҳо</p>
+    </header>
+    <div class="gold-divider"></div>
+
+    <button class="install-btn" id="installBtn" onclick="installApp()">📲 Насб кардан</button>
+
+    <!-- ==================== САҲИФАИ ТАҚВИМ ==================== -->
+    <div class="page active" id="pageCalendar">
+
+        <div class="today-card">
+            <div class="day-name" id="dayName"></div>
+            <div class="hijri-date" id="hijriDay"></div>
+            <div class="hijri-month" id="hijriMonth"></div>
+            <div class="hijri-year" id="hijriYear"></div>
+            <div class="miladi-date" id="miladiDate"></div>
+        </div>
+
+        <div class="calendar-section">
+            <div class="year-nav">
+                <button onclick="changeYear(-1)">◀</button>
+                <select id="yearSelect" onchange="onYearChange()"></select>
+                <span class="year-label">ҳиҷрӣ</span>
+                <button onclick="changeYear(1)">▶</button>
+            </div>
+            <div class="cal-nav">
+                <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
+                <div class="month-title">
+                    <div class="hijri" id="calMonthTitle"></div>
+                    <div class="miladi" id="calMiladiTitle"></div>
+                </div>
+                <button class="nav-btn" onclick="changeMonth(1)">▶</button>
+            </div>
+            <button class="today-btn" onclick="goToday()">▶ Имрӯз</button>
+            <div class="cal-grid" id="calGrid"></div>
+        </div>
+
+        <div class="full-year-section">
+            <button class="toggle-year-btn" id="toggleYearBtn" onclick="toggleFullYear()">📅 Нишон додани ҳамаи моҳҳо</button>
+            <div id="fullYearWrap" style="display:none;">
+                <h2 id="fullYearTitle"></h2>
+                <div class="full-year-grid" id="fullYearGrid"></div>
+            </div>
+        </div>
+
+        <div class="holidays-section">
+            <h2>🌙 Идҳо ва рӯзҳои муҳим</h2>
+            <div id="holidaysList"></div>
+        </div>
+    </div>
+
+    <!-- ==================== САҲИФАИ НАМОЗ ==================== -->
+    <div class="page" id="pagePrayer">
+
+        <!-- Соат -->
+        <div class="clock-card">
+            <div class="clock-label" id="clockCity">🕌 Душанбе</div>
+            <div class="clock-main" id="clockMain">--:--<span class="clock-seconds" id="clockSec">00</span></div>
+            <div class="clock-date" id="clockDate"></div>
+        </div>
+
+        <!-- Вақтҳои ҷаҳонӣ -->
+        <div class="world-clock-card">
+            <h2>🌍 Вақти ҷаҳонӣ</h2>
+            <div id="worldClocks"></div>
+        </div>
+
+        <div class="city-section">
+            <label>🏙 Шаҳр:</label>
+            <select id="citySelect" onchange="onCityChange()">
+                <option value="dushanbe">Душанбе</option>
+                <option value="khujand">Хуҷанд</option>
+                <option value="kulob">Кӯлоб</option>
+                <option value="bokhtar">Бохтар (Қурғонтеппа)</option>
+                <option value="istaravshan">Истаравшан</option>
+                <option value="khorog">Хоруғ</option>
+                <option value="panjakent">Панҷакент</option>
+                <option value="tursunzoda">Турсунзода</option>
+                <option value="isfara">Исфара</option>
+                <option value="vahdat">Ваҳдат</option>
+            </select>
+            <div class="city-coords" id="cityCoords"></div>
+        </div>
+
+        <div class="date-card">
+            <div class="main-date" id="prayerDate"></div>
+            <div class="sub-date" id="prayerHijri"></div>
+        </div>
+
+        <div class="prayer-card">
+            <h2>🤲 Вақтҳои намози имрӯз</h2>
+            <div class="prayer-row fajr" id="rowFajr">
+                <span class="prayer-icon">🌙</span>
+                <div class="prayer-info"><div class="prayer-name">Субҳ (Фаҷр)</div><div class="prayer-arabic">صلاة الفجر</div></div>
+                <div class="prayer-time" id="timeFajr">--:--</div>
+            </div>
+            <div class="prayer-row sunrise" id="rowSunrise">
+                <span class="prayer-icon">🌅</span>
+                <div class="prayer-info"><div class="prayer-name">Офтоббарорӣ</div><div class="prayer-arabic">الشروق</div></div>
+                <div class="prayer-time" id="timeSunrise">--:--</div>
+            </div>
+            <div class="prayer-row dhuhr" id="rowDhuhr">
+                <span class="prayer-icon">☀️</span>
+                <div class="prayer-info"><div class="prayer-name">Пешин (Зуҳр)</div><div class="prayer-arabic">صلاة الظهر</div></div>
+                <div class="prayer-time" id="timeDhuhr">--:--</div>
+            </div>
+            <div class="prayer-row asr" id="rowAsr">
+                <span class="prayer-icon">🌤</span>
+                <div class="prayer-info"><div class="prayer-name">Аср (Дигар)</div><div class="prayer-arabic">صلاة العصر</div></div>
+                <div class="prayer-time" id="timeAsr">--:--</div>
+            </div>
+            <div class="prayer-row maghrib" id="rowMaghrib">
+                <span class="prayer-icon">🌇</span>
+                <div class="prayer-info"><div class="prayer-name">Шом (Мағриб)</div><div class="prayer-arabic">صلاة المغرب</div></div>
+                <div class="prayer-time" id="timeMaghrib">--:--</div>
+            </div>
+            <div class="prayer-row isha" id="rowIsha">
+                <span class="prayer-icon">🌃</span>
+                <div class="prayer-info"><div class="prayer-name">Хуфтан (Ишо)</div><div class="prayer-arabic">صلاة العشاء</div></div>
+                <div class="prayer-time" id="timeIsha">--:--</div>
+            </div>
+        </div>
+
+        <div class="week-card">
+            <h2>📅 Вақтҳои намоз барои ҳафта</h2>
+            <table class="week-table">
+                <thead><tr>
+                    <th>Рӯз</th><th>Субҳ</th><th>Офтоб</th><th>Пешин</th><th>Аср</th><th>Шом</th><th>Хуфтан</th>
+                </tr></thead>
+                <tbody id="weekBody"></tbody>
+            </table>
+        </div>
+
+        <!-- Самти Қибла -->
+        <div class="qibla-card">
+            <h2>🕋 Самти Қибла</h2>
+
+            <div class="qibla-compass">
+                <div class="compass-ring" id="compassRing">
+                    <span class="compass-dir n">Ш</span>
+                    <span class="compass-dir s">Ҷ</span>
+                    <span class="compass-dir e">Шр</span>
+                    <span class="compass-dir w">Ғр</span>
+                    <div class="qibla-arrow" id="qiblaArrow"></div>
+                    <span class="kaaba-icon" id="kaabaIcon">🕋</span>
+                    <div class="compass-center"></div>
+                </div>
+            </div>
+
+            <div class="qibla-info">
+                <div class="qibla-degrees" id="qiblaDeg">--°<small> аз шимол</small></div>
+                <div class="qibla-direction" id="qiblaDir">---</div>
+                <div class="qibla-distance" id="qiblaDist"></div>
+            </div>
+
+            <button class="qibla-btn" id="qiblaBtn" onclick="findQibla()">📍 Ҷойгиршавии ман (GPS)</button>
+            <div class="qibla-status" id="qiblaStatus">Барои ёфтани самти Қибла тугмаро зер кунед</div>
+            <div class="compass-note">Дар телефон компас автоматӣ кор мекунад. Дар компютер самт бо дараҷа нишон дода мешавад.</div>
+        </div>
+
+        <div class="info-card">
+            <h3>ℹ️ Дар бораи ҳисобкунӣ</h3>
+            <p>Вақтҳои намоз тибқи усули Ҳанафӣ ҳисоб карда мешаванд. Фаҷр: 18°, Ишо: 18°, Аср: соя ду баробар. Вақтҳо тақрибианд — лутфан бо тақвими масҷиди маҳаллии худ муқоиса кунед.</p>
+        </div>
+    </div>
+
+    <!-- ==================== САҲИФАИ ДУОҲО ==================== -->
+    <div class="page" id="pageDua">
+
+        <div class="dua-header-card">
+            <h2>📖 Дуоҳои Қуръонӣ</h2>
+            <p>Дуоҳои мунтахаб аз Қуръони Карим</p>
+        </div>
+
+        <!-- Филтр -->
+        <div class="dua-filter">
+            <button class="filter-btn active" onclick="filterDuas('all')">Ҳама</button>
+            <button class="filter-btn" onclick="filterDuas('daily')">Ҳаррӯза</button>
+            <button class="filter-btn" onclick="filterDuas('protection')">Муҳофизат</button>
+            <button class="filter-btn" onclick="filterDuas('forgiveness')">Истиғфор</button>
+            <button class="filter-btn" onclick="filterDuas('guidance')">Ҳидоят</button>
+            <button class="filter-btn" onclick="filterDuas('patience')">Сабр</button>
+        </div>
+
+        <div id="duaList"></div>
+
+    </div>
+
+    <div class="gold-divider"></div>
+    <footer>
+        <div class="footer-bismillah">﷽</div>
+        <div>Тақвими Мусалмон — Барои мусулмонони тоҷик</div>
+        <div class="footer-version">Версияи 1.0</div>
+    </footer>
+
+    <script>
+        // ===================== ТАБҲО =====================
+        const PAGES = ['calendar', 'prayer', 'dua'];
+        function switchTab(tab) {
+            document.getElementById('pageCalendar').classList.toggle('active', tab === 'calendar');
+            document.getElementById('pagePrayer').classList.toggle('active', tab === 'prayer');
+            document.getElementById('pageDua').classList.toggle('active', tab === 'dua');
+            let btns = document.querySelectorAll('.tab-bar button');
+            btns[0].classList.toggle('active', tab === 'calendar');
+            btns[1].classList.toggle('active', tab === 'prayer');
+            btns[2].classList.toggle('active', tab === 'dua');
+            if (tab === 'prayer') { showPrayerDate(); showPrayers(); showWeek(); updateClock(); renderWorldClocks(); initQibla(); }
+            if (tab === 'dua') { renderDuas(); }
+            window.scrollTo(0, 0);
+        }
+
+        // ===================== УМУМӢ =====================
+        const HIJRI_MONTHS = [
+            'Муҳаррам', 'Сафар', 'Рабеъул-Аввал', 'Рабеъус-Сонӣ',
+            'Ҷумодул-Аввал', 'Ҷумодус-Сонӣ', 'Раҷаб', 'Шаъбон',
+            'Рамазон', 'Шаввол', 'Зулқаъда', 'Зулҳиҷҷа'
+        ];
+        const MILADI_MONTHS = ['Январ','Феврал','Март','Апрел','Май','Июн','Июл','Август','Сентябр','Октябр','Ноябр','Декабр'];
+        const WEEK_DAYS = ['Яш','Дш','Сш','Чш','Пш','Ҷм','Шн'];
+        const WEEK_DAYS_FULL = ['Якшанбе','Душанбе','Сешанбе','Чоршанбе','Панҷшанбе','Ҷумъа','Шанбе'];
+
+        const ISLAMIC_HOLIDAYS = [
+            {month:1,day:1,name:'Соли Нави Ҳиҷрӣ'},{month:1,day:10,name:'Рӯзи Ошуро'},
+            {month:3,day:12,name:'Мавлуди Паёмбар ﷺ'},{month:7,day:27,name:'Меъроҷи Паёмбар ﷺ'},
+            {month:8,day:15,name:'Шаби Барот'},{month:9,day:1,name:'Оғози Рамазон'},
+            {month:9,day:27,name:'Шаби Қадр'},{month:10,day:1,name:'Иди Рамазон (Иди Фитр)'},
+            {month:10,day:2,name:'Иди Рамазон (рӯзи 2)'},{month:10,day:3,name:'Иди Рамазон (рӯзи 3)'},
+            {month:12,day:9,name:'Рӯзи Арафа'},{month:12,day:10,name:'Иди Қурбон'},
+            {month:12,day:11,name:'Иди Қурбон (рӯзи 2)'},{month:12,day:12,name:'Иди Қурбон (рӯзи 3)'},
+        ];
+
+        // ===================== ТАҚВИМИ ҲИҶРӢ =====================
+        function gregorianToJD(year, month, day) {
+            if (month <= 2) { year--; month += 12; }
+            let A = Math.floor(year / 100);
+            let B = 2 - A + Math.floor(A / 4);
+            return Math.floor(365.25*(year+4716)) + Math.floor(30.6001*(month+1)) + day + B - 1524.5;
+        }
+
+        function jdToGregorian(jd) {
+            let z = Math.floor(jd + 0.5);
+            let a = Math.floor((z - 1867216.25) / 36524.25);
+            a = z + 1 + a - Math.floor(a / 4);
+            let b = a + 1524, c = Math.floor((b - 122.1) / 365.25);
+            let d = Math.floor(365.25 * c), e = Math.floor((b - d) / 30.6001);
+            let day = b - d - Math.floor(30.6001 * e);
+            let month = e < 14 ? e - 1 : e - 13;
+            let year = month > 2 ? c - 4716 : c - 4715;
+            return { year, month, day };
+        }
+
+        function hijriToJD(year, month, day) {
+            return Math.floor((11*year+3)/30) + 354*year + 30*month - Math.floor((month-1)/2) + day + 1948440 - 385;
+        }
+
+        function jdToHijri(jd) {
+            jd = Math.floor(jd) + 0.5;
+            let year = Math.floor((30*(jd-1948439.5)+10646)/10631);
+            let month = Math.min(12, Math.ceil((jd-29-hijriToJD(year,1,1))/29.5)+1);
+            let day = jd - hijriToJD(year, month, 1) + 1;
+            return { year, month, day: Math.floor(day) };
+        }
+
+        function gregorianToHijri(y,m,d) { return jdToHijri(gregorianToJD(y,m,d)); }
+        function hijriToGregorian(y,m,d) { return jdToGregorian(hijriToJD(y,m,d)); }
+
+        function getHijriMonthDays(year, month) {
+            let jd1 = hijriToJD(year, month, 1);
+            let jd2 = month < 12 ? hijriToJD(year, month+1, 1) : hijriToJD(year+1, 1, 1);
+            return jd2 - jd1;
+        }
+
+        function getFirstDayOfHijriMonth(hY, hM) {
+            let g = hijriToGregorian(hY, hM, 1);
+            return new Date(g.year, g.month-1, g.day).getDay();
+        }
+
+        // ===================== ТАҚВИМ =====================
+        let today = new Date();
+        let todayHijri = gregorianToHijri(today.getFullYear(), today.getMonth()+1, today.getDate());
+        let currentViewYear = todayHijri.year;
+        let currentViewMonth = todayHijri.month;
+
+        function initYearSelect() {
+            let sel = document.getElementById('yearSelect');
+            for (let y = todayHijri.year - 10; y <= todayHijri.year + 20; y++) {
+                let opt = document.createElement('option');
+                opt.value = y; opt.textContent = y;
+                if (y === currentViewYear) opt.selected = true;
+                sel.appendChild(opt);
+            }
+        }
+
+        function onYearChange() {
+            currentViewYear = parseInt(document.getElementById('yearSelect').value);
+            renderCalendar(); if(fullYearVisible) renderFullYear(); renderHolidays();
+        }
+
+        function changeYear(delta) {
+            currentViewYear += delta;
+            let sel = document.getElementById('yearSelect');
+            if (!sel.querySelector(`option[value="${currentViewYear}"]`)) {
+                let opt = document.createElement('option');
+                opt.value = currentViewYear; opt.textContent = currentViewYear;
+                sel.appendChild(opt);
+            }
+            sel.value = currentViewYear;
+            renderCalendar(); if(fullYearVisible) renderFullYear(); renderHolidays();
+        }
+
+        function goToday() {
+            currentViewYear = todayHijri.year;
+            currentViewMonth = todayHijri.month;
+            document.getElementById('yearSelect').value = currentViewYear;
+            renderCalendar(); if(fullYearVisible) renderFullYear(); renderHolidays();
+        }
+
+        function showToday() {
+            document.getElementById('dayName').textContent = WEEK_DAYS_FULL[today.getDay()];
+            document.getElementById('hijriDay').textContent = todayHijri.day;
+            document.getElementById('hijriMonth').textContent = HIJRI_MONTHS[todayHijri.month-1];
+            document.getElementById('hijriYear').textContent = todayHijri.year + ' ҳиҷрӣ';
+            document.getElementById('miladiDate').textContent =
+                today.getDate()+' '+MILADI_MONTHS[today.getMonth()]+' '+today.getFullYear()+' мелодӣ';
+        }
+
+        // Функсия барои гирифтани маълумоти рӯз
+        function getDayInfo(hMonth, hDay, dow) {
+            let lines = [];
+            // Иди исломӣ?
+            let holidays = ISLAMIC_HOLIDAYS.filter(h => h.month === hMonth && h.day === hDay);
+            holidays.forEach(h => lines.push('🌙 ' + h.name));
+            // Ҷумъа?
+            if (dow === 5) lines.push('🕌 Рӯзи Ҷумъа');
+            // Рӯзҳои мустаҳаб
+            if (hDay === 13 || hDay === 14 || hDay === 15) lines.push('☪ Рӯзи аёми бейз (рӯзадорӣ мустаҳаб)');
+            if ((hMonth === 1 && hDay === 9) || (hMonth === 1 && hDay === 10)) lines.push('☪ Рӯзадорӣ мустаҳаб');
+            if (hMonth === 9) lines.push('☪ Моҳи Рамазон — рӯзадорӣ воҷиб');
+            if (hMonth === 12 && hDay >= 1 && hDay <= 9) lines.push('☪ Даҳаи аввали Зулҳиҷҷа — амалҳои нек');
+            if (hMonth === 10 && hDay >= 1 && hDay <= 3) lines.push('🚫 Рӯзадорӣ ҳаром');
+            if (hMonth === 12 && hDay >= 10 && hDay <= 13) lines.push('🚫 Рӯзадорӣ ҳаром (Айёми ташриқ)');
+            return lines;
+        }
+
+        function renderCalendar() {
+            let grid = document.getElementById('calGrid');
+            grid.innerHTML = '';
+            document.getElementById('calMonthTitle').textContent = HIJRI_MONTHS[currentViewMonth-1]+' '+currentViewYear;
+
+            let firstGreg = hijriToGregorian(currentViewYear, currentViewMonth, 1);
+            let lastDay = getHijriMonthDays(currentViewYear, currentViewMonth);
+            let lastGreg = hijriToGregorian(currentViewYear, currentViewMonth, lastDay);
+
+            document.getElementById('calMiladiTitle').textContent =
+                MILADI_MONTHS[firstGreg.month-1]+' — '+MILADI_MONTHS[lastGreg.month-1]+' '+firstGreg.year;
+
+            for (let d of WEEK_DAYS) {
+                let el = document.createElement('div');
+                el.className = 'day-header'; el.textContent = d;
+                grid.appendChild(el);
+            }
+
+            let firstDow = getFirstDayOfHijriMonth(currentViewYear, currentViewMonth);
+            for (let i = 0; i < firstDow; i++) {
+                let el = document.createElement('div');
+                el.className = 'day-cell empty';
+                grid.appendChild(el);
+            }
+
+            for (let day = 1; day <= lastDay; day++) {
+                let el = document.createElement('div');
+                el.className = 'day-cell';
+                let greg = hijriToGregorian(currentViewYear, currentViewMonth, day);
+                let dow = new Date(greg.year, greg.month-1, greg.day).getDay();
+
+                if (currentViewYear===todayHijri.year && currentViewMonth===todayHijri.month && day===todayHijri.day) el.classList.add('today');
+                if (dow===5) el.classList.add('juma');
+                let isHoliday = ISLAMIC_HOLIDAYS.some(h=>h.month===currentViewMonth && h.day===day);
+                if (isHoliday) el.classList.add('holiday');
+
+                // Tooltip
+                let info = getDayInfo(currentViewMonth, day, dow);
+                let gregStr = greg.day + ' ' + MILADI_MONTHS[greg.month-1] + ' ' + greg.year;
+                let tipText = day + ' ' + HIJRI_MONTHS[currentViewMonth-1] + ' = ' + gregStr;
+                tipText += '<br>' + WEEK_DAYS_FULL[dow];
+                if (info.length > 0) tipText += '<br>─────<br>' + info.join('<br>');
+
+                let tipClass = isHoliday ? 'day-tooltip holiday-tip' : 'day-tooltip';
+
+                el.innerHTML = `<span class="hijri-day">${day}</span><span class="greg-small">${greg.day}/${greg.month}</span><div class="${tipClass}">${tipText}</div>`;
+                // Барои телефон — зарб
+                el.addEventListener('click', function(e) {
+                    document.querySelectorAll('.day-cell.show-tip').forEach(c => c.classList.remove('show-tip'));
+                    this.classList.add('show-tip');
+                    e.stopPropagation();
+                });
+                grid.appendChild(el);
+            }
+        }
+
+        function changeMonth(delta) {
+            currentViewMonth += delta;
+            if (currentViewMonth > 12) { currentViewMonth = 1; currentViewYear++; }
+            else if (currentViewMonth < 1) { currentViewMonth = 12; currentViewYear--; }
+            document.getElementById('yearSelect').value = currentViewYear;
+            renderCalendar();
+        }
+
+        function renderFullYear() {
+            let container = document.getElementById('fullYearGrid');
+            container.innerHTML = '';
+            document.getElementById('fullYearTitle').textContent = '📅 Ҳамаи моҳҳои соли '+currentViewYear+' ҳиҷрӣ';
+
+            for (let m = 1; m <= 12; m++) {
+                let card = document.createElement('div');
+                card.className = 'mini-month';
+                let fG = hijriToGregorian(currentViewYear, m, 1);
+                let lD = getHijriMonthDays(currentViewYear, m);
+                let lG = hijriToGregorian(currentViewYear, m, lD);
+
+                card.innerHTML = `<div class="mini-month-title">${HIJRI_MONTHS[m-1]}<small>${MILADI_MONTHS[fG.month-1]} — ${MILADI_MONTHS[lG.month-1]} ${fG.year}</small></div>`;
+
+                let grid = document.createElement('div');
+                grid.className = 'mini-grid';
+                for (let d of WEEK_DAYS) {
+                    let h = document.createElement('div');
+                    h.className = 'mday-header'; h.textContent = d;
+                    grid.appendChild(h);
+                }
+                let firstDow = getFirstDayOfHijriMonth(currentViewYear, m);
+                for (let i = 0; i < firstDow; i++) {
+                    grid.appendChild(Object.assign(document.createElement('div'), {className:'mday'}));
+                }
+                for (let day = 1; day <= lD; day++) {
+                    let el = document.createElement('div');
+                    el.className = 'mday';
+                    let greg = hijriToGregorian(currentViewYear, m, day);
+                    let dow = new Date(greg.year, greg.month-1, greg.day).getDay();
+                    if (currentViewYear===todayHijri.year && m===todayHijri.month && day===todayHijri.day) el.classList.add('today');
+                    if (dow===5) el.classList.add('juma');
+                    let isH = ISLAMIC_HOLIDAYS.some(h=>h.month===m && h.day===day);
+                    if (isH) el.classList.add('holiday');
+
+                    // Mini tooltip
+                    let info = getDayInfo(m, day, dow);
+                    let tipLines = WEEK_DAYS_FULL[dow] + ', ' + greg.day+'/'+greg.month+'/'+greg.year;
+                    if (info.length > 0) tipLines += '<br>' + info.join('<br>');
+                    let tipCls = isH ? 'mday-tooltip holiday-tip' : 'mday-tooltip';
+
+                    el.innerHTML = day + `<div class="${tipCls}">${tipLines}</div>`;
+                    el.addEventListener('click', function(e) {
+                        document.querySelectorAll('.mday.show-tip').forEach(c => c.classList.remove('show-tip'));
+                        this.classList.add('show-tip');
+                        e.stopPropagation();
+                    });
+                    grid.appendChild(el);
+                }
+                card.appendChild(grid);
+                container.appendChild(card);
+            }
+        }
+
+        function renderHolidays() {
+            let list = document.getElementById('holidaysList');
+            list.innerHTML = '';
+            for (let h of ISLAMIC_HOLIDAYS) {
+                let greg = hijriToGregorian(currentViewYear, h.month, h.day);
+                let gregDate = new Date(greg.year, greg.month-1, greg.day);
+                let item = document.createElement('div');
+                item.className = 'holiday-item';
+                if (gregDate < today) item.style.opacity = '0.5';
+                item.innerHTML = `<div class="h-name">${h.name}</div>
+                    <div class="h-date">${h.day} ${HIJRI_MONTHS[h.month-1]}<small>${greg.day} ${MILADI_MONTHS[greg.month-1]} ${greg.year}</small></div>`;
+                list.appendChild(item);
+            }
+        }
+
+        // ===================== СОАТ =====================
+        const WORLD_CITIES = [
+            { name: 'Душанбе', country: 'Тоҷикистон', tz: 'Asia/Dushanbe', icon: '🇹🇯', utc: 5 },
+            { name: 'Макка', country: 'Арабистони Саудӣ', tz: 'Asia/Riyadh', icon: '🕋', utc: 3 },
+            { name: 'Маскав', country: 'Русия', tz: 'Europe/Moscow', icon: '🇷🇺', utc: 3 },
+            { name: 'Истамбул', country: 'Туркия', tz: 'Europe/Istanbul', icon: '🇹🇷', utc: 3 },
+            { name: 'Дубай', country: 'Аморатҳо', tz: 'Asia/Dubai', icon: '🇦🇪', utc: 4 },
+            { name: 'Теҳрон', country: 'Эрон', tz: 'Asia/Tehran', icon: '🇮🇷', utc: 3.5 },
+            { name: 'Исламобод', country: 'Покистон', tz: 'Asia/Karachi', icon: '🇵🇰', utc: 5 },
+            { name: 'Тошканд', country: 'Ӯзбекистон', tz: 'Asia/Tashkent', icon: '🇺🇿', utc: 5 },
+            { name: 'Бишкек', country: 'Қирғизистон', tz: 'Asia/Bishkek', icon: '🇰🇬', utc: 6 },
+            { name: 'Лондон', country: 'Англия', tz: 'Europe/London', icon: '🇬🇧', utc: 0 },
+            { name: 'Пекин', country: 'Чин', tz: 'Asia/Shanghai', icon: '🇨🇳', utc: 8 },
+            { name: 'Ню-Йорк', country: 'ИМА', tz: 'America/New_York', icon: '🇺🇸', utc: -5 },
+            { name: 'Қоҳира', country: 'Миср', tz: 'Africa/Cairo', icon: '🇪🇬', utc: 2 },
+            { name: 'Ҷакарта', country: 'Индонезия', tz: 'Asia/Jakarta', icon: '🇮🇩', utc: 7 },
+            { name: 'Куала-Лумпур', country: 'Малайзия', tz: 'Asia/Kuala_Lumpur', icon: '🇲🇾', utc: 8 },
+        ];
+
+        function getTimeInTZ(tz) {
+            try {
+                let now = new Date();
+                let str = now.toLocaleString('en-GB', { timeZone: tz, hour:'2-digit', minute:'2-digit', hour12: false });
+                return str;
+            } catch(e) { return '--:--'; }
+        }
+
+        function updateClock() {
+            let now = new Date();
+            let h = String(now.getHours()).padStart(2,'0');
+            let m = String(now.getMinutes()).padStart(2,'0');
+            let s = String(now.getSeconds()).padStart(2,'0');
+            document.getElementById('clockMain').innerHTML = h + ':' + m + '<span class="clock-seconds">' + s + '</span>';
+
+            let city = CITIES[currentCity];
+            document.getElementById('clockCity').textContent = '🕌 ' + city.name;
+            document.getElementById('clockDate').textContent =
+                WEEK_DAYS_FULL[now.getDay()] + ', ' + now.getDate() + ' ' + MILADI_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+        }
+
+        function renderWorldClocks() {
+            let container = document.getElementById('worldClocks');
+            container.innerHTML = '';
+            let localUTC = CITIES[currentCity] ? CITIES[currentCity].tz : 5;
+
+            for (let c of WORLD_CITIES) {
+                let row = document.createElement('div');
+                row.className = 'world-row';
+                if (c.name === (CITIES[currentCity] ? CITIES[currentCity].name : 'Душанбе')) row.classList.add('current');
+
+                let time = getTimeInTZ(c.tz);
+                let diff = c.utc - localUTC;
+                let diffStr = diff >= 0 ? '+' + diff : '' + diff;
+
+                row.innerHTML = `
+                    <div class="w-left">
+                        <span class="w-icon">${c.icon}</span>
+                        <div>
+                            <div class="w-city">${c.name}</div>
+                            <div class="w-country">${c.country}</div>
+                        </div>
+                    </div>
+                    <div class="w-right">
+                        <div class="w-time">${time}</div>
+                        <div class="w-diff">UTC${c.utc >= 0 ? '+' : ''}${c.utc} (${diffStr}с)</div>
+                    </div>`;
+                container.appendChild(row);
+            }
+        }
+
+        // ===================== ҚИБЛА =====================
+        // Координатҳои Каъба
+        const KAABA_LAT = 21.4225;
+        const KAABA_LNG = 39.8262;
+        let userLat = null, userLng = null;
+        let deviceHeading = null;
+        let qiblaAngle = null;
+
+        function calculateQiblaDirection(lat, lng) {
+            let latR = lat * DEG;
+            let lngR = lng * DEG;
+            let kLatR = KAABA_LAT * DEG;
+            let kLngR = KAABA_LNG * DEG;
+            let dLng = kLngR - lngR;
+
+            let x = Math.sin(dLng) * Math.cos(kLatR);
+            let y = Math.cos(latR) * Math.sin(kLatR) - Math.sin(latR) * Math.cos(kLatR) * Math.cos(dLng);
+            let angle = Math.atan2(x, y) * RAD;
+            return (angle + 360) % 360;
+        }
+
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            let R = 6371;
+            let dLat = (lat2 - lat1) * DEG;
+            let dLng = (lng2 - lng1) * DEG;
+            let a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                    Math.cos(lat1 * DEG) * Math.cos(lat2 * DEG) *
+                    Math.sin(dLng/2) * Math.sin(dLng/2);
+            let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        function getDirectionName(deg) {
+            if (deg >= 337.5 || deg < 22.5) return 'Шимол';
+            if (deg >= 22.5 && deg < 67.5) return 'Шимолу-Шарқ';
+            if (deg >= 67.5 && deg < 112.5) return 'Шарқ';
+            if (deg >= 112.5 && deg < 157.5) return 'Ҷанубу-Шарқ';
+            if (deg >= 157.5 && deg < 202.5) return 'Ҷануб';
+            if (deg >= 202.5 && deg < 247.5) return 'Ҷанубу-Ғарб';
+            if (deg >= 247.5 && deg < 292.5) return 'Ғарб';
+            return 'Шимолу-Ғарб';
+        }
+
+        function updateQiblaDisplay() {
+            if (qiblaAngle === null) return;
+
+            document.getElementById('qiblaDeg').innerHTML = Math.round(qiblaAngle) + '°<small> аз шимол</small>';
+            document.getElementById('qiblaDir').textContent = '🧭 Самт: ' + getDirectionName(qiblaAngle);
+
+            // Тирча ва Каъба
+            let arrow = document.getElementById('qiblaArrow');
+            let kaaba = document.getElementById('kaabaIcon');
+            let ring = document.getElementById('compassRing');
+
+            if (deviceHeading !== null) {
+                // Компас фаъол — компасро мегардонем
+                ring.style.transform = 'rotate(' + (-deviceHeading) + 'deg)';
+                arrow.style.transform = 'rotate(' + qiblaAngle + 'deg)';
+            } else {
+                ring.style.transform = 'rotate(0deg)';
+                arrow.style.transform = 'rotate(' + qiblaAngle + 'deg)';
+            }
+
+            // Каъба дар нӯги тирча
+            let kaabaAngle = qiblaAngle;
+            let kaabaR = 105;
+            let kx = kaabaR * Math.sin(kaabaAngle * DEG);
+            let ky = -kaabaR * Math.cos(kaabaAngle * DEG);
+            kaaba.style.left = (130 + kx - 13) + 'px';
+            kaaba.style.top = (130 + ky - 13) + 'px';
+
+            if (userLat !== null) {
+                let dist = calculateDistance(userLat, userLng, KAABA_LAT, KAABA_LNG);
+                document.getElementById('qiblaDist').textContent =
+                    '📏 Масофа то Каъба: ' + Math.round(dist) + ' км';
+            }
+        }
+
+        function findQibla() {
+            let btn = document.getElementById('qiblaBtn');
+            let status = document.getElementById('qiblaStatus');
+
+            if (!navigator.geolocation) {
+                status.textContent = '❌ GPS дар ин браузер дастрас нест';
+                status.className = 'qibla-status error';
+                // Аз шаҳри интихобшуда истифода мебарем
+                useSelectedCity();
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Ҷустуҷӯ...';
+            status.textContent = 'Интизори GPS...';
+            status.className = 'qibla-status';
+
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    userLat = pos.coords.latitude;
+                    userLng = pos.coords.longitude;
+                    qiblaAngle = calculateQiblaDirection(userLat, userLng);
+                    updateQiblaDisplay();
+
+                    status.textContent = '✅ Ҷойгиршавӣ: ' + userLat.toFixed(4) + '°, ' + userLng.toFixed(4) + '°';
+                    status.className = 'qibla-status success';
+                    btn.textContent = '📍 Навсозӣ (GPS)';
+                    btn.disabled = false;
+
+                    // Компаси телефон
+                    startCompass();
+                },
+                function(err) {
+                    status.className = 'qibla-status error';
+                    if (err.code === 1) status.textContent = '❌ Дастрасӣ ба GPS рад шуд. Аз шаҳри интихобшуда истифода мешавад.';
+                    else if (err.code === 2) status.textContent = '❌ GPS дастнорас. Аз шаҳри интихобшуда истифода мешавад.';
+                    else status.textContent = '❌ Хатои GPS. Аз шаҳри интихобшуда истифода мешавад.';
+                    btn.textContent = '📍 Боз кӯшиш кардан';
+                    btn.disabled = false;
+                    useSelectedCity();
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+            );
+        }
+
+        function useSelectedCity() {
+            let city = CITIES[currentCity];
+            userLat = city.lat;
+            userLng = city.lng;
+            qiblaAngle = calculateQiblaDirection(userLat, userLng);
+            updateQiblaDisplay();
+            document.getElementById('qiblaDist').textContent +=
+                ' (аз ' + city.name + ')';
+        }
+
+        function startCompass() {
+            if (window.DeviceOrientationEvent) {
+                // iOS 13+
+                if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission().then(function(response) {
+                        if (response === 'granted') {
+                            window.addEventListener('deviceorientation', handleCompass);
+                        }
+                    }).catch(function() {});
+                } else {
+                    window.addEventListener('deviceorientation', handleCompass);
+                }
+            }
+        }
+
+        function handleCompass(e) {
+            let heading = null;
+            if (e.webkitCompassHeading !== undefined) {
+                heading = e.webkitCompassHeading; // iOS
+            } else if (e.alpha !== null) {
+                heading = (360 - e.alpha) % 360; // Android
+            }
+            if (heading !== null) {
+                deviceHeading = heading;
+                updateQiblaDisplay();
+            }
+        }
+
+        // Дар оғоз аз шаҳри интихобшуда қибларо нишон медиҳем
+        function initQibla() {
+            useSelectedCity();
+        }
+
+        // ===================== ВАҚТИ НАМОЗ =====================
+        const CITIES = {
+            dushanbe:{name:'Душанбе',lat:38.5598,lng:68.7740,tz:5},
+            khujand:{name:'Хуҷанд',lat:40.2833,lng:69.6333,tz:5},
+            kulob:{name:'Кӯлоб',lat:37.9137,lng:69.7850,tz:5},
+            bokhtar:{name:'Бохтар',lat:37.8364,lng:68.7847,tz:5},
+            istaravshan:{name:'Истаравшан',lat:39.9142,lng:69.0033,tz:5},
+            khorog:{name:'Хоруғ',lat:37.5361,lng:71.5111,tz:5},
+            panjakent:{name:'Панҷакент',lat:39.4939,lng:67.6108,tz:5},
+            tursunzoda:{name:'Турсунзода',lat:38.5128,lng:68.2314,tz:5},
+            isfara:{name:'Исфара',lat:40.1264,lng:70.6253,tz:5},
+            vahdat:{name:'Ваҳдат',lat:38.5561,lng:69.0172,tz:5},
+        };
+
+        let currentCity = 'dushanbe';
+        const DEG = Math.PI/180, RAD = 180/Math.PI;
+
+        function sunPosition(jd) {
+            let D = jd - 2451545.0;
+            let g = (357.529 + 0.98560028*D) % 360;
+            let q = (280.459 + 0.98564736*D) % 360;
+            let L = (q + 1.915*Math.sin(g*DEG) + 0.020*Math.sin(2*g*DEG)) % 360;
+            let e = 23.439 - 0.00000036*D;
+            let RA = Math.atan2(Math.cos(e*DEG)*Math.sin(L*DEG), Math.cos(L*DEG))*RAD;
+            let dec = Math.asin(Math.sin(e*DEG)*Math.sin(L*DEG))*RAD;
+            let EqT = q - RA;
+            if (EqT > 180) EqT -= 360;
+            if (EqT < -180) EqT += 360;
+            return { dec, EqT };
+        }
+
+        function hourAngle(lat, dec, angle) {
+            let cos_ha = (Math.sin(angle*DEG) - Math.sin(lat*DEG)*Math.sin(dec*DEG)) / (Math.cos(lat*DEG)*Math.cos(dec*DEG));
+            if (cos_ha > 1 || cos_ha < -1) return null;
+            return Math.acos(cos_ha)*RAD;
+        }
+
+        function asrTime(lat, dec, factor) {
+            let a = Math.atan(1/(factor + Math.tan(Math.abs(lat-dec)*DEG)))*RAD;
+            return hourAngle(lat, dec, a);
+        }
+
+        function formatTime(hours) {
+            if (hours===null || isNaN(hours)) return '--:--';
+            let h = Math.floor(hours), m = Math.round((hours-h)*60);
+            if (m===60) { h++; m=0; }
+            return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0');
+        }
+
+        function calculatePrayer(date, lat, lng, tz) {
+            let jd = gregorianToJD(date.getFullYear(), date.getMonth()+1, date.getDate());
+            let sun = sunPosition(jd);
+            let transit = 12 + (-sun.EqT/15) - (lng/15) + tz;
+            let ha_fajr = hourAngle(lat, sun.dec, -18);
+            let fajr = ha_fajr!==null ? transit - ha_fajr/15 : null;
+            let ha_sun = hourAngle(lat, sun.dec, -0.833);
+            let sunrise = ha_sun!==null ? transit - ha_sun/15 : null;
+            let dhuhr = transit + 2/60;
+            let ha_asr = asrTime(lat, sun.dec, 2);
+            let asr = ha_asr!==null ? transit + ha_asr/15 : null;
+            let maghrib = ha_sun!==null ? transit + ha_sun/15 : null;
+            let ha_isha = hourAngle(lat, sun.dec, -18);
+            let isha = ha_isha!==null ? transit + ha_isha/15 : null;
+            return { fajr, sunrise, dhuhr, asr, maghrib, isha };
+        }
+
+        function showPrayerDate() {
+            let now = new Date();
+            document.getElementById('prayerDate').textContent =
+                WEEK_DAYS_FULL[now.getDay()]+', '+now.getDate()+' '+MILADI_MONTHS[now.getMonth()]+' '+now.getFullYear();
+            let h = gregorianToHijri(now.getFullYear(), now.getMonth()+1, now.getDate());
+            document.getElementById('prayerHijri').textContent =
+                h.day+' '+HIJRI_MONTHS[h.month-1]+' '+h.year+' ҳиҷрӣ';
+        }
+
+        function showPrayers() {
+            let city = CITIES[currentCity], now = new Date();
+            let times = calculatePrayer(now, city.lat, city.lng, city.tz);
+
+            document.getElementById('timeFajr').textContent = formatTime(times.fajr);
+            document.getElementById('timeSunrise').textContent = formatTime(times.sunrise);
+            document.getElementById('timeDhuhr').textContent = formatTime(times.dhuhr);
+            document.getElementById('timeAsr').textContent = formatTime(times.asr);
+            document.getElementById('timeMaghrib').textContent = formatTime(times.maghrib);
+            document.getElementById('timeIsha').textContent = formatTime(times.isha);
+
+            document.getElementById('cityCoords').textContent =
+                'Арзи ҷуғрофӣ: '+city.lat.toFixed(2)+'°  Тӯли ҷуғрофӣ: '+city.lng.toFixed(2)+'°';
+
+            let currentHour = now.getHours() + now.getMinutes()/60;
+            let ids = ['rowFajr','rowSunrise','rowDhuhr','rowAsr','rowMaghrib','rowIsha'];
+            let vals = [times.fajr, times.sunrise, times.dhuhr, times.asr, times.maghrib, times.isha];
+            ids.forEach(id => document.getElementById(id).classList.remove('active'));
+            let activeIdx = -1;
+            for (let i = vals.length-1; i >= 0; i--) {
+                if (vals[i]!==null && currentHour >= vals[i]) { activeIdx = i; break; }
+            }
+            if (activeIdx >= 0) document.getElementById(ids[activeIdx]).classList.add('active');
+        }
+
+        function showWeek() {
+            let body = document.getElementById('weekBody');
+            body.innerHTML = '';
+            let city = CITIES[currentCity], now = new Date(), todayStr = now.toDateString();
+            let start = new Date(now);
+            start.setDate(now.getDate() - now.getDay());
+
+            for (let i = 0; i < 7; i++) {
+                let d = new Date(start);
+                d.setDate(start.getDate()+i);
+                let times = calculatePrayer(d, city.lat, city.lng, city.tz);
+                let tr = document.createElement('tr');
+                if (d.toDateString()===todayStr) tr.className = 'today-row';
+                tr.innerHTML = `<td class="day-col">${WEEK_DAYS_FULL[d.getDay()].substring(0,3)} ${d.getDate()}</td>
+                    <td>${formatTime(times.fajr)}</td><td>${formatTime(times.sunrise)}</td>
+                    <td>${formatTime(times.dhuhr)}</td><td>${formatTime(times.asr)}</td>
+                    <td>${formatTime(times.maghrib)}</td><td>${formatTime(times.isha)}</td>`;
+                body.appendChild(tr);
+            }
+        }
+
+        function onCityChange() {
+            currentCity = document.getElementById('citySelect').value;
+            showPrayers(); showWeek(); updateClock(); renderWorldClocks();
+            if (!navigator.geolocation || userLat === CITIES[Object.keys(CITIES)[0]]?.lat) useSelectedCity();
+        }
+
+        // ===================== PWA =====================
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', e => {
+            e.preventDefault(); deferredPrompt = e;
+            document.getElementById('installBtn').style.display = 'block';
+        });
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => { deferredPrompt=null; document.getElementById('installBtn').style.display='none'; });
+            }
+        }
+        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+
+        // ===================== ДУОҲО =====================
+        const DUAS = [
+            {
+                cat: 'daily',
+                title: 'Сураи Фотиҳа',
+                arabic: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ ﴿١﴾ الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ ﴿٢﴾ الرَّحْمَٰنِ الرَّحِيمِ ﴿٣﴾ مَالِكِ يَوْمِ الدِّينِ ﴿٤﴾ إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ ﴿٥﴾ اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ ﴿٦﴾ صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ ﴿٧﴾',
+                tajik: 'Ба номи Худои Бахшояндаи Меҳрубон. Ҳамду сано Худоро, Парвардигори ҷаҳониён. Бахшояндаи Меҳрубон. Подшоҳи рӯзи ҷазо. Танҳо Туро мепарастем ва танҳо аз Ту ёрӣ металабем. Моро ба роҳи рост ҳидоят кун. Роҳи онҳое, ки ба онҳо неъмат додаӣ, на роҳи ғазабдидагон ва на роҳи гумроҳон.',
+                ref: 'Сураи 1, оятҳои 1-7'
+            },
+            {
+                cat: 'daily',
+                title: 'Оятул-Курсӣ',
+                arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ',
+                tajik: 'Аллоҳ — нест маъбуде ба ҷуз Ӯ, зинда ва поянда аст. На чуртзанӣ Ӯро фурӯ мегирад ва на хоб. Аз они Ӯст ҳар чӣ дар осмонҳо ва замин аст. Кист, ки назди Ӯ шафоъат кунад магар ба изни Ӯ? Медонад он чиро, ки пеши рӯи онҳост ва он чиро, ки пушти сари онҳост. Ва ба чизе аз илми Ӯ иҳота намекунанд, магар ба он чи Ӯ бихоҳад. Курсии Ӯ осмонҳо ва заминро фаро гирифтааст ва нигаҳдории онҳо Ӯро вазнинӣ намекунад. Ва Ӯ баландмартаба ва бузург аст.',
+                ref: 'Сураи Бақара (2), ояти 255'
+            },
+            {
+                cat: 'protection',
+                title: 'Сураи Ихлос',
+                arabic: 'قُلْ هُوَ اللَّهُ أَحَدٌ ﴿١﴾ اللَّهُ الصَّمَدُ ﴿٢﴾ لَمْ يَلِدْ وَلَمْ يُولَدْ ﴿٣﴾ وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ ﴿٤﴾',
+                tajik: 'Бигӯ: Ӯ Аллоҳ якест. Аллоҳ бениёз аст. На зоидааст ва на зода шудааст. Ва ягон кас ба Ӯ ҳамто нест.',
+                ref: 'Сураи 112, оятҳои 1-4'
+            },
+            {
+                cat: 'protection',
+                title: 'Сураи Фалақ',
+                arabic: 'قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ﴿١﴾ مِنْ شَرِّ مَا خَلَقَ ﴿٢﴾ وَمِنْ شَرِّ غَاسِقٍ إِذَا وَقَبَ ﴿٣﴾ وَمِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ ﴿٤﴾ وَمِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ ﴿٥﴾',
+                tajik: 'Бигӯ: Паноҳ мебарам ба Парвардигори субҳ. Аз шарри он чи офаридааст. Ва аз шарри торикӣ, чун фаро расад. Аз шарри афсунгарон, ки дар гиреҳҳо медаманд. Ва аз шарри ҳасудон, чун ҳасад варзанд.',
+                ref: 'Сураи 113, оятҳои 1-5'
+            },
+            {
+                cat: 'protection',
+                title: 'Сураи Нос',
+                arabic: 'قُلْ أَعُوذُ بِرَبِّ النَّاسِ ﴿١﴾ مَلِكِ النَّاسِ ﴿٢﴾ إِلَٰهِ النَّاسِ ﴿٣﴾ مِنْ شَرِّ الْوَسْوَاسِ الْخَنَّاسِ ﴿٤﴾ الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ ﴿٥﴾ مِنَ الْجِنَّةِ وَالنَّاسِ ﴿٦﴾',
+                tajik: 'Бигӯ: Паноҳ мебарам ба Парвардигори мардум. Подшоҳи мардум. Маъбуди мардум. Аз шарри васвасагари пинҳоншаванда. Ки дар дилҳои мардум васваса мекунад. Аз ҷинниён ва мардум.',
+                ref: 'Сураи 114, оятҳои 1-6'
+            },
+            {
+                cat: 'forgiveness',
+                title: 'Дуои Одам (а)',
+                arabic: 'رَبَّنَا ظَلَمْنَا أَنفُسَنَا وَإِن لَّمْ تَغْفِرْ لَنَا وَتَرْحَمْنَا لَنَكُونَنَّ مِنَ الْخَاسِرِينَ',
+                tajik: 'Парвардигоро! Мо ба худамон ситам кардем ва агар Ту моро наомурзӣ ва ба мо раҳм накунӣ, аз зиёнкорон хоҳем буд.',
+                ref: 'Сураи Аъроф (7), ояти 23'
+            },
+            {
+                cat: 'forgiveness',
+                title: 'Дуои Юнус (а)',
+                arabic: 'لَا إِلَٰهَ إِلَّا أَنتَ سُبْحَانَكَ إِنِّي كُنتُ مِنَ الظَّالِمِينَ',
+                tajik: 'Нест маъбуде ба ҷуз Ту! Пок ҳастӣ Ту! Ба ростӣ ман аз ситамгорон будам.',
+                ref: 'Сураи Анбиё (21), ояти 87'
+            },
+            {
+                cat: 'forgiveness',
+                title: 'Истиғфори Нӯҳ (а)',
+                arabic: 'رَبِّ اغْفِرْ لِي وَلِوَالِدَيَّ وَلِمَن دَخَلَ بَيْتِيَ مُؤْمِنًا وَلِلْمُؤْمِنِينَ وَالْمُؤْمِنَاتِ',
+                tajik: 'Парвардигоро! Маро биомурз ва падару модарамро ва ҳар киро, ки бо имон ба хонаи ман даромад ва ҳамаи мардону занони мӯъминро.',
+                ref: 'Сураи Нӯҳ (71), ояти 28'
+            },
+            {
+                cat: 'guidance',
+                title: 'Дуои ҳидоят',
+                arabic: 'رَبَّنَا لَا تُزِغْ قُلُوبَنَا بَعْدَ إِذْ هَدَيْتَنَا وَهَبْ لَنَا مِن لَّدُنكَ رَحْمَةً ۚ إِنَّكَ أَنتَ الْوَهَّابُ',
+                tajik: 'Парвардигоро! Дилҳои моро пас аз он ки ҳидоят кардӣ, каҷ магардон ва аз назди худ ба мо раҳмат бибахш. Бешак Ту бахшандаи бузургӣ.',
+                ref: 'Сураи Оли Имрон (3), ояти 8'
+            },
+            {
+                cat: 'guidance',
+                title: 'Дуо барои илм',
+                arabic: 'رَبِّ زِدْنِي عِلْمًا',
+                tajik: 'Парвардигоро! Илми маро зиёд кун.',
+                ref: 'Сураи Тоҳо (20), ояти 114'
+            },
+            {
+                cat: 'guidance',
+                title: 'Дуои Мӯсо (а) барои кушодани забон',
+                arabic: 'رَبِّ اشْرَحْ لِي صَدْرِي ﴿٢٥﴾ وَيَسِّرْ لِي أَمْرِي ﴿٢٦﴾ وَاحْلُلْ عُقْدَةً مِّن لِّسَانِي ﴿٢٧﴾ يَفْقَهُوا قَوْلِي ﴿٢٨﴾',
+                tajik: 'Парвардигоро! Синаамро кушода гардон. Ва корамро осон кун. Ва гиреҳро аз забонам бикушо. То суханамро бифаҳманд.',
+                ref: 'Сураи Тоҳо (20), оятҳои 25-28'
+            },
+            {
+                cat: 'patience',
+                title: 'Дуо барои сабр ва истиқомат',
+                arabic: 'رَبَّنَا أَفْرِغْ عَلَيْنَا صَبْرًا وَثَبِّتْ أَقْدَامَنَا وَانصُرْنَا عَلَى الْقَوْمِ الْكَافِرِينَ',
+                tajik: 'Парвардигоро! Бар мо сабр бирез ва қадамҳои моро устувор бидор ва моро бар қавми кофирон пирӯз гардон.',
+                ref: 'Сураи Бақара (2), ояти 250'
+            },
+            {
+                cat: 'patience',
+                title: 'Дуо барои осонӣ',
+                arabic: 'فَإِنَّ مَعَ الْعُسْرِ يُسْرًا ﴿٥﴾ إِنَّ مَعَ الْعُسْرِ يُسْرًا ﴿٦﴾',
+                tajik: 'Ба ростӣ бо душворӣ осонӣ аст. Бешак бо душворӣ осонӣ аст.',
+                ref: 'Сураи Инширо (94), оятҳои 5-6'
+            },
+            {
+                cat: 'patience',
+                title: 'Дуои Яъқуб (а)',
+                arabic: 'إِنَّمَا أَشْكُو بَثِّي وَحُزْنِي إِلَى اللَّهِ',
+                tajik: 'Ман ғаму андӯҳи худро танҳо ба Худо арз мекунам.',
+                ref: 'Сураи Юсуф (12), ояти 86'
+            },
+            {
+                cat: 'daily',
+                title: 'Дуо ҳангоми хоб',
+                arabic: 'بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا',
+                tajik: 'Худоё! Бо номи Ту мемирам ва зинда мешавам.',
+                ref: 'Ҳадис — Саҳеҳи Бухорӣ'
+            },
+            {
+                cat: 'daily',
+                title: 'Дуо ҳангоми бедоршавӣ',
+                arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَمَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ',
+                tajik: 'Ҳамду сано Худоро, ки моро пас аз мамот зинда кард ва ба сӯи Ӯст бозгашт.',
+                ref: 'Ҳадис — Саҳеҳи Бухорӣ'
+            },
+            {
+                cat: 'daily',
+                title: 'Дуо пеш аз хӯрок',
+                arabic: 'بِسْمِ اللَّهِ وَعَلَى بَرَكَةِ اللَّهِ',
+                tajik: 'Ба номи Худо ва бо баракати Худо.',
+                ref: 'Ҳадис'
+            },
+            {
+                cat: 'daily',
+                title: 'Дуо баъд аз хӯрок',
+                arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنَا وَسَقَانَا وَجَعَلَنَا مُسْلِمِينَ',
+                tajik: 'Ҳамду сано Худоро, ки моро хӯронд ва нӯшонд ва аз мусулмонон гардонд.',
+                ref: 'Ҳадис — Абу Довуд'
+            },
+            {
+                cat: 'protection',
+                title: 'Дуо ҳангоми баромадан аз хона',
+                arabic: 'بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
+                tajik: 'Ба номи Худо, таваккул кардам ба Худо ва нест ҳеҷ қувват ва нерӯе магар аз Худо.',
+                ref: 'Ҳадис — Абу Довуд'
+            },
+            {
+                cat: 'protection',
+                title: 'Дуо барои муҳофизат аз ҳар бадӣ',
+                arabic: 'أَعُوذُ بِكَلِمَاتِ اللَّهِ التَّامَّاتِ مِنْ شَرِّ مَا خَلَقَ',
+                tajik: 'Паноҳ мебарам ба калимоти комили Худо аз шарри он чи офаридааст.',
+                ref: 'Ҳадис — Муслим'
+            },
+            {
+                cat: 'guidance',
+                title: 'Дуо барои хотимаи нек',
+                arabic: 'رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ',
+                tajik: 'Парвардигоро! Ба мо дар дунё некӣ бидеҳ ва дар охират некӣ бидеҳ ва моро аз азоби оташ нигоҳ дор.',
+                ref: 'Сураи Бақара (2), ояти 201'
+            },
+            {
+                cat: 'forgiveness',
+                title: 'Саййидул-Истиғфор',
+                arabic: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ',
+                tajik: 'Худоё! Ту Парвардигори манӣ, нест маъбуде ба ҷуз Ту. Маро офаридаӣ ва ман бандаи Ту ҳастам. Ва ман бар аҳду паймони Ту ҳастам, то ҷое ки тавоноям. Аз шарри он чи кардаам ба Ту паноҳ мебарам. Ба неъмати Ту бар худ эътироф мекунам ва ба гуноҳам эътироф мекунам. Пас маро биомурз, зеро гуноҳонро ҷуз Ту касе намеомурзад.',
+                ref: 'Ҳадис — Саҳеҳи Бухорӣ'
+            },
+            {
+                cat: 'patience',
+                title: 'Дуо дар вақти мусибат',
+                arabic: 'إِنَّا لِلَّهِ وَإِنَّا إِلَيْهِ رَاجِعُونَ ۚ اللَّهُمَّ أْجُرْنِي فِي مُصِيبَتِي وَاخْلُفْ لِي خَيْرًا مِنْهَا',
+                tajik: 'Мо аз они Худоем ва ба сӯи Ӯ бозмегардем. Худоё! Маро дар мусибатам подош деҳ ва беҳтар аз онро ба ман иваз гардон.',
+                ref: 'Сураи Бақара (2:156) ва Ҳадис — Муслим'
+            },
+        ];
+
+        let currentDuaFilter = 'all';
+        const CAT_NAMES = { daily:'Ҳаррӯза', protection:'Муҳофизат', forgiveness:'Истиғфор', guidance:'Ҳидоят', patience:'Сабр' };
+
+        function filterDuas(cat) {
+            currentDuaFilter = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            renderDuas();
+        }
+
+        function renderDuas() {
+            let list = document.getElementById('duaList');
+            list.innerHTML = '';
+            let filtered = currentDuaFilter === 'all' ? DUAS : DUAS.filter(d => d.cat === currentDuaFilter);
+            filtered.forEach((d, i) => {
+                let card = document.createElement('div');
+                card.className = 'dua-card';
+                card.innerHTML = `
+                    <span class="dua-number">${i+1}</span>
+                    <span class="dua-category">${CAT_NAMES[d.cat]}</span>
+                    <div class="dua-title">${d.title}</div>
+                    <div class="dua-arabic">${d.arabic}</div>
+                    <div class="dua-tajik">${d.tajik}</div>
+                    <div class="dua-reference">📖 ${d.ref}</div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // Нишон/пинҳон кардани ҳамаи моҳҳо
+        let fullYearVisible = false;
+        function toggleFullYear() {
+            fullYearVisible = !fullYearVisible;
+            let wrap = document.getElementById('fullYearWrap');
+            let btn = document.getElementById('toggleYearBtn');
+            if (fullYearVisible) {
+                renderFullYear();
+                wrap.style.display = 'block';
+                btn.textContent = '📅 Пинҳон кардани моҳҳо';
+                btn.classList.add('open');
+            } else {
+                wrap.style.display = 'none';
+                btn.textContent = '📅 Нишон додани ҳамаи моҳҳо';
+                btn.classList.remove('open');
+            }
+        }
+
+        // Пинҳон кардани tooltip вақти зарб ба ҷои дигар
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.show-tip').forEach(c => c.classList.remove('show-tip'));
+        });
+
+        // ===================== ОҒОЗ =====================
+        initYearSelect();
+        showToday();
+        renderCalendar();
+        renderHolidays();
+
+        setInterval(() => { updateClock(); showPrayers(); }, 1000);
+        setInterval(renderWorldClocks, 60000);
+    </script>
+</body>
+</html>

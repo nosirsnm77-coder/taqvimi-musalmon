@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="tg" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a5e3a">
+    <meta name="description" content="Вақтҳои намоз — Тоҷикистон">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="icon-192.png" type="image/png">
+    <title>Вақтҳои намоз</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --green-dark: #1a5e3a;
+            --green-main: #2e8b57;
+            --green-light: #4caf7d;
+            --gold: #d4a843;
+            --bg: #f5f0e8;
+            --text: #2c2c2c;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Noto Sans', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Навигатсия */
+        .nav-bar {
+            background: linear-gradient(135deg, var(--green-dark), var(--green-main));
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            padding: 0 10px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-bar a {
+            color: var(--white);
+            text-decoration: none;
+            padding: 15px 20px;
+            font-weight: 600;
+            font-size: 0.95em;
+            opacity: 0.8;
+            transition: all 0.2s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-bar a:hover, .nav-bar a.active {
+            opacity: 1;
+            border-bottom: 3px solid var(--gold);
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--green-dark), var(--green-main));
+            width: 100%;
+            padding: 25px 20px 20px;
+            text-align: center;
+            color: var(--white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '🕌';
+            position: absolute;
+            font-size: 120px;
+            opacity: 0.07;
+            top: -20px;
+            right: -10px;
+        }
+
+        header h1 { font-size: 1.8em; font-weight: 700; margin-bottom: 5px; }
+        header p { font-size: 0.95em; opacity: 0.9; }
+
+        /* Интихоби шаҳр */
+        .city-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 15px 15px;
+            max-width: 500px;
+            width: calc(100% - 30px);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .city-section label {
+            font-weight: 600;
+            color: var(--green-dark);
+            margin-right: 10px;
+        }
+
+        .city-section select {
+            background: var(--white);
+            border: 2px solid var(--green-main);
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-size: 1em;
+            color: var(--green-dark);
+            cursor: pointer;
+            outline: none;
+        }
+
+        .city-section select:focus { border-color: var(--gold); }
+
+        .city-coords {
+            margin-top: 8px;
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        /* Санаи имрӯз */
+        .date-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 0 15px 15px;
+            max-width: 500px;
+            width: calc(100% - 30px);
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-top: 4px solid var(--gold);
+        }
+
+        .date-card .main-date {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--green-dark);
+        }
+
+        .date-card .sub-date {
+            font-size: 0.9em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* Вақтҳо */
+        .prayer-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 0 15px 15px;
+            max-width: 500px;
+            width: calc(100% - 30px);
+            box-shadow: var(--shadow);
+        }
+
+        .prayer-card h2 {
+            text-align: center;
+            color: var(--green-dark);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .prayer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 15px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+
+        .prayer-row:last-child { margin-bottom: 0; }
+
+        .prayer-row .prayer-icon { font-size: 1.5em; margin-right: 12px; }
+
+        .prayer-row .prayer-info {
+            flex: 1;
+        }
+
+        .prayer-row .prayer-name {
+            font-weight: 700;
+            font-size: 1.05em;
+            color: var(--text);
+        }
+
+        .prayer-row .prayer-arabic {
+            font-size: 0.8em;
+            color: #aaa;
+        }
+
+        .prayer-row .prayer-time {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--green-dark);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .prayer-row.fajr { background: linear-gradient(135deg, #e8f0fe, #f0f4ff); }
+        .prayer-row.sunrise { background: linear-gradient(135deg, #fff8e1, #fff3cd); }
+        .prayer-row.dhuhr { background: linear-gradient(135deg, #e8f5e9, #f1f8e9); }
+        .prayer-row.asr { background: linear-gradient(135deg, #fff3e0, #ffecd2); }
+        .prayer-row.maghrib { background: linear-gradient(135deg, #fce4ec, #f8d7da); }
+        .prayer-row.isha { background: linear-gradient(135deg, #ede7f6, #e8def8); }
+
+        .prayer-row.active {
+            box-shadow: 0 0 0 3px var(--gold);
+            transform: scale(1.02);
+        }
+
+        /* Шарҳ */
+        .info-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 0 15px 20px;
+            max-width: 500px;
+            width: calc(100% - 30px);
+            box-shadow: var(--shadow);
+        }
+
+        .info-card h3 {
+            color: var(--green-dark);
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .info-card p {
+            font-size: 0.85em;
+            color: #777;
+            line-height: 1.6;
+        }
+
+        /* Тақвими ҳафтагӣ */
+        .week-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 0 15px 15px;
+            max-width: 600px;
+            width: calc(100% - 30px);
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+
+        .week-card h2 {
+            text-align: center;
+            color: var(--green-dark);
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+
+        .week-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8em;
+        }
+
+        .week-table th {
+            background: var(--green-main);
+            color: var(--white);
+            padding: 8px 5px;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .week-table td {
+            padding: 6px 5px;
+            text-align: center;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .week-table tr.today-row {
+            background: #e8f5e9;
+            font-weight: 700;
+        }
+
+        .week-table .day-col {
+            font-weight: 600;
+            color: var(--green-dark);
+            text-align: left;
+        }
+
+        footer { text-align: center; padding: 20px; color: #aaa; font-size: 0.8em; }
+
+        @media (min-width: 768px) {
+            header h1 { font-size: 2.2em; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-bar">
+        <a href="index.html">☪ Тақвим</a>
+        <a href="namoz.html" class="active">🕌 Вақти намоз</a>
+    </nav>
+
+    <header>
+        <h1>🕌 Вақтҳои намоз</h1>
+        <p>Вақти намоз барои шаҳрҳои Тоҷикистон</p>
+    </header>
+
+    <!-- Интихоби шаҳр -->
+    <div class="city-section">
+        <label>🏙 Шаҳр:</label>
+        <select id="citySelect" onchange="onCityChange()">
+            <option value="dushanbe">Душанбе</option>
+            <option value="khujand">Хуҷанд</option>
+            <option value="kulob">Кӯлоб</option>
+            <option value="bokhtar">Бохтар (Қурғонтеппа)</option>
+            <option value="istaravshan">Истаравшан</option>
+            <option value="khorog">Хоруғ</option>
+            <option value="panjakent">Панҷакент</option>
+            <option value="tursunzoda">Турсунзода</option>
+            <option value="isfara">Исфара</option>
+            <option value="vahdat">Ваҳдат</option>
+        </select>
+        <div class="city-coords" id="cityCoords"></div>
+    </div>
+
+    <!-- Сана -->
+    <div class="date-card">
+        <div class="main-date" id="todayDate"></div>
+        <div class="sub-date" id="todayHijri"></div>
+    </div>
+
+    <!-- Вақтҳои намоз -->
+    <div class="prayer-card">
+        <h2>🤲 Вақтҳои намози имрӯз</h2>
+
+        <div class="prayer-row fajr" id="rowFajr">
+            <span class="prayer-icon">🌙</span>
+            <div class="prayer-info">
+                <div class="prayer-name">Субҳ (Фаҷр)</div>
+                <div class="prayer-arabic">صلاة الفجر</div>
+            </div>
+            <div class="prayer-time" id="timeFajr">--:--</div>
+        </div>
+
+        <div class="prayer-row sunrise" id="rowSunrise">
+            <span class="prayer-icon">🌅</span>
+            <div class="prayer-info">
+                <div class="prayer-name">Офтоббарорӣ</div>
+                <div class="prayer-arabic">الشروق</div>
+            </div>
+            <div class="prayer-time" id="timeSunrise">--:--</div>
+        </div>
+
+        <div class="prayer-row dhuhr" id="rowDhuhr">
+            <span class="prayer-icon">☀️</span>
+            <div class="prayer-info">
+                <div class="prayer-name">Пешин (Зуҳр)</div>
+                <div class="prayer-arabic">صلاة الظهر</div>
+            </div>
+            <div class="prayer-time" id="timeDhuhr">--:--</div>
+        </div>
+
+        <div class="prayer-row asr" id="rowAsr">
+            <span class="prayer-icon">🌤</span>
+            <div class="prayer-info">
+                <div class="prayer-name">Аср (Дигар)</div>
+                <div class="prayer-arabic">صلاة العصر</div>
+            </div>
+            <div class="prayer-time" id="timeAsr">--:--</div>
+        </div>
+
+        <div class="prayer-row maghrib" id="rowMaghrib">
+            <span class="prayer-icon">🌇</span>
+            <div class="prayer-info">
+                <div class="prayer-name">Шом (Мағриб)</div>
+                <div class="prayer-arabic">صلاة المغرب</div>
+            </div>
+            <div class="prayer-time" id="timeMaghrib">--:--</div>
+        </div>
+
+        <div class="prayer-row isha" id="rowIsha">
+            <span class="prayer-icon">🌃</span>
+            <div class="prayer-info">
+                <div class="prayer-name">Хуфтан (Ишо)</div>
+                <div class="prayer-arabic">صلاة العشاء</div>
+            </div>
+            <div class="prayer-time" id="timeIsha">--:--</div>
+        </div>
+    </div>
+
+    <!-- Ҳафтагӣ -->
+    <div class="week-card">
+        <h2>📅 Вақтҳои намоз барои ҳафта</h2>
+        <table class="week-table">
+            <thead>
+                <tr>
+                    <th>Рӯз</th>
+                    <th>Субҳ</th>
+                    <th>Офтоб</th>
+                    <th>Пешин</th>
+                    <th>Аср</th>
+                    <th>Шом</th>
+                    <th>Хуфтан</th>
+                </tr>
+            </thead>
+            <tbody id="weekBody"></tbody>
+        </table>
+    </div>
+
+    <div class="info-card">
+        <h3>ℹ️ Дар бораи ҳисобкунӣ</h3>
+        <p>
+            Вақтҳои намоз тибқи усули Ҳанафӣ ҳисоб карда мешаванд.
+            Фаҷр: 18°, Ишо: 18°, Аср: соя ду баробар.
+            Вақтҳо тақрибианд — лутфан бо тақвими масҷиди маҳаллии худ муқоиса кунед.
+        </p>
+    </div>
+
+    <footer>Вақтҳои намоз — Бисмиллоҳир Раҳмонир Раҳим</footer>
+
+    <script>
+        // === Шаҳрҳо (ному координатҳо) ===
+        const CITIES = {
+            dushanbe:    { name: 'Душанбе',    lat: 38.5598, lng: 68.7740, tz: 5 },
+            khujand:     { name: 'Хуҷанд',     lat: 40.2833, lng: 69.6333, tz: 5 },
+            kulob:       { name: 'Кӯлоб',      lat: 37.9137, lng: 69.7850, tz: 5 },
+            bokhtar:     { name: 'Бохтар',      lat: 37.8364, lng: 68.7847, tz: 5 },
+            istaravshan: { name: 'Истаравшан',  lat: 39.9142, lng: 69.0033, tz: 5 },
+            khorog:      { name: 'Хоруғ',       lat: 37.5361, lng: 71.5111, tz: 5 },
+            panjakent:   { name: 'Панҷакент',   lat: 39.4939, lng: 67.6108, tz: 5 },
+            tursunzoda:  { name: 'Турсунзода',  lat: 38.5128, lng: 68.2314, tz: 5 },
+            isfara:      { name: 'Исфара',      lat: 40.1264, lng: 70.6253, tz: 5 },
+            vahdat:      { name: 'Ваҳдат',      lat: 38.5561, lng: 69.0172, tz: 5 },
+        };
+
+        const WEEK_DAYS_FULL = ['Якшанбе', 'Душанбе', 'Сешанбе', 'Чоршанбе', 'Панҷшанбе', 'Ҷумъа', 'Шанбе'];
+        const MILADI_MONTHS = ['Январ','Феврал','Март','Апрел','Май','Июн','Июл','Август','Сентябр','Октябр','Ноябр','Декабр'];
+        const HIJRI_MONTHS = ['Муҳаррам','Сафар','Рабеъул-Аввал','Рабеъус-Сонӣ','Ҷумодул-Аввал','Ҷумодус-Сонӣ','Раҷаб','Шаъбон','Рамазон','Шаввол','Зулқаъда','Зулҳиҷҷа'];
+
+        let currentCity = 'dushanbe';
+
+        // === Ҳисобкунии вақтҳои намоз (астрономӣ) ===
+        const DEG = Math.PI / 180;
+        const RAD = 180 / Math.PI;
+
+        function julianDate(year, month, day) {
+            if (month <= 2) { year--; month += 12; }
+            let A = Math.floor(year / 100);
+            let B = 2 - A + Math.floor(A / 4);
+            return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
+        }
+
+        function sunPosition(jd) {
+            let D = jd - 2451545.0;
+            let g = (357.529 + 0.98560028 * D) % 360;
+            let q = (280.459 + 0.98564736 * D) % 360;
+            let L = (q + 1.915 * Math.sin(g * DEG) + 0.020 * Math.sin(2 * g * DEG)) % 360;
+            let e = 23.439 - 0.00000036 * D;
+            let RA = Math.atan2(Math.cos(e * DEG) * Math.sin(L * DEG), Math.cos(L * DEG)) * RAD;
+            let dec = Math.asin(Math.sin(e * DEG) * Math.sin(L * DEG)) * RAD;
+            let EqT = q - RA;
+            if (EqT > 180) EqT -= 360;
+            if (EqT < -180) EqT += 360;
+            return { dec, EqT };
+        }
+
+        function hourAngle(lat, dec, angle) {
+            let cos_ha = (Math.sin(angle * DEG) - Math.sin(lat * DEG) * Math.sin(dec * DEG)) /
+                         (Math.cos(lat * DEG) * Math.cos(dec * DEG));
+            if (cos_ha > 1) return null;  // Намеравад
+            if (cos_ha < -1) return null;
+            return Math.acos(cos_ha) * RAD;
+        }
+
+        function asrTime(lat, dec, factor) {
+            let a = Math.atan(1 / (factor + Math.tan(Math.abs(lat - dec) * DEG))) * RAD;
+            return hourAngle(lat, dec, a);
+        }
+
+        function formatTime(hours) {
+            if (hours === null || isNaN(hours)) return '--:--';
+            let h = Math.floor(hours);
+            let m = Math.round((hours - h) * 60);
+            if (m === 60) { h++; m = 0; }
+            return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
+        }
+
+        function calculatePrayer(date, lat, lng, tz) {
+            let jd = julianDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
+            let sun = sunPosition(jd);
+
+            let transit = 12 + (- sun.EqT / 15) - (lng / 15) + tz;
+
+            // Субҳ (Фаҷр) — 18° зери уфуқ
+            let ha_fajr = hourAngle(lat, sun.dec, -18);
+            let fajr = ha_fajr !== null ? transit - ha_fajr / 15 : null;
+
+            // Офтоббарорӣ — -0.833° (бо рефракция)
+            let ha_sun = hourAngle(lat, sun.dec, -0.833);
+            let sunrise = ha_sun !== null ? transit - ha_sun / 15 : null;
+
+            // Пешин (Зуҳр)
+            let dhuhr = transit + 2 / 60; // 2 дақиқа баъд аз transit
+
+            // Аср — соя 2 баробар (Ҳанафӣ)
+            let ha_asr = asrTime(lat, sun.dec, 2);
+            let asr = ha_asr !== null ? transit + ha_asr / 15 : null;
+
+            // Шом (Мағриб)
+            let maghrib = ha_sun !== null ? transit + ha_sun / 15 : null;
+
+            // Хуфтан (Ишо) — 18° зери уфуқ
+            let ha_isha = hourAngle(lat, sun.dec, -18);
+            let isha = ha_isha !== null ? transit + ha_isha / 15 : null;
+
+            return { fajr, sunrise, dhuhr, asr, maghrib, isha };
+        }
+
+        // === Ҳиҷрӣ ===
+        function gregorianToHijri(gYear, gMonth, gDay) {
+            let jd = julianDate(gYear, gMonth, gDay);
+            jd = Math.floor(jd) + 0.5;
+            let year = Math.floor((30 * (jd - 1948439.5) + 10646) / 10631);
+            let hjd1 = Math.floor((11 * year + 3) / 30) + 354 * year + 30 * 1 - Math.floor(0 / 2) + 1 + 1948440 - 385;
+            let month = Math.min(12, Math.ceil((jd - 29 - hjd1) / 29.5) + 1);
+            let hjd2 = Math.floor((11 * year + 3) / 30) + 354 * year + 30 * month - Math.floor((month - 1) / 2) + 1 + 1948440 - 385;
+            let day = jd - hjd2 + 1;
+            return { year, month, day: Math.floor(day) };
+        }
+
+        // === Намоиш ===
+        function showDate() {
+            let now = new Date();
+            let dow = WEEK_DAYS_FULL[now.getDay()];
+            document.getElementById('todayDate').textContent =
+                dow + ', ' + now.getDate() + ' ' + MILADI_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+
+            let h = gregorianToHijri(now.getFullYear(), now.getMonth() + 1, now.getDate());
+            document.getElementById('todayHijri').textContent =
+                h.day + ' ' + HIJRI_MONTHS[h.month - 1] + ' ' + h.year + ' ҳиҷрӣ';
+        }
+
+        function showPrayers() {
+            let city = CITIES[currentCity];
+            let now = new Date();
+            let times = calculatePrayer(now, city.lat, city.lng, city.tz);
+
+            document.getElementById('timeFajr').textContent = formatTime(times.fajr);
+            document.getElementById('timeSunrise').textContent = formatTime(times.sunrise);
+            document.getElementById('timeDhuhr').textContent = formatTime(times.dhuhr);
+            document.getElementById('timeAsr').textContent = formatTime(times.asr);
+            document.getElementById('timeMaghrib').textContent = formatTime(times.maghrib);
+            document.getElementById('timeIsha').textContent = formatTime(times.isha);
+
+            document.getElementById('cityCoords').textContent =
+                'Арзи ҷуғрофӣ: ' + city.lat.toFixed(2) + '°  Тӯли ҷуғрофӣ: ' + city.lng.toFixed(2) + '°';
+
+            // Нишон додани намози ҷорӣ
+            let currentHour = now.getHours() + now.getMinutes() / 60;
+            let prayerIds = ['rowFajr', 'rowSunrise', 'rowDhuhr', 'rowAsr', 'rowMaghrib', 'rowIsha'];
+            let prayerTimes = [times.fajr, times.sunrise, times.dhuhr, times.asr, times.maghrib, times.isha];
+
+            prayerIds.forEach(id => document.getElementById(id).classList.remove('active'));
+
+            let activeIdx = -1;
+            for (let i = prayerTimes.length - 1; i >= 0; i--) {
+                if (prayerTimes[i] !== null && currentHour >= prayerTimes[i]) {
+                    activeIdx = i;
+                    break;
+                }
+            }
+            if (activeIdx >= 0) {
+                document.getElementById(prayerIds[activeIdx]).classList.add('active');
+            }
+        }
+
+        function showWeek() {
+            let body = document.getElementById('weekBody');
+            body.innerHTML = '';
+            let city = CITIES[currentCity];
+            let now = new Date();
+            let todayStr = now.toDateString();
+
+            // Рӯзи аввали ҳафта (якшанбе)
+            let startDay = new Date(now);
+            startDay.setDate(now.getDate() - now.getDay());
+
+            for (let i = 0; i < 7; i++) {
+                let d = new Date(startDay);
+                d.setDate(startDay.getDate() + i);
+                let times = calculatePrayer(d, city.lat, city.lng, city.tz);
+                let isToday = d.toDateString() === todayStr;
+
+                let tr = document.createElement('tr');
+                if (isToday) tr.className = 'today-row';
+
+                let dayName = WEEK_DAYS_FULL[d.getDay()];
+                let short = dayName.substring(0, 3);
+
+                tr.innerHTML = `
+                    <td class="day-col">${short} ${d.getDate()}</td>
+                    <td>${formatTime(times.fajr)}</td>
+                    <td>${formatTime(times.sunrise)}</td>
+                    <td>${formatTime(times.dhuhr)}</td>
+                    <td>${formatTime(times.asr)}</td>
+                    <td>${formatTime(times.maghrib)}</td>
+                    <td>${formatTime(times.isha)}</td>
+                `;
+                body.appendChild(tr);
+            }
+        }
+
+        function onCityChange() {
+            currentCity = document.getElementById('citySelect').value;
+            showPrayers();
+            showWeek();
+        }
+
+        // === Оғоз ===
+        showDate();
+        showPrayers();
+        showWeek();
+
+        // Ҳар 60 сония навсозӣ
+        setInterval(() => {
+            showPrayers();
+        }, 60000);
+    </script>
+</body>
+</html>
