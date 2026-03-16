@@ -732,6 +732,27 @@
         }
         .tasbih-history-item .dhikr-name { font-family: 'Amiri', serif; font-size: 1.1rem; color: var(--green-dark); }
         .tasbih-history-item .dhikr-count { font-weight: 700; color: var(--gold); font-size: 1.2rem; }
+
+        /* ====== НАСТРОЙКА ====== */
+        .settings-section {
+            background: var(--white); border-radius: 16px; padding: 20px;
+            margin-bottom: 15px; box-shadow: var(--shadow);
+        }
+        .settings-title { color: var(--green-dark); font-size: 1.1rem; margin-bottom: 8px; }
+        .settings-desc { color: #666; font-size: 0.9rem; margin-bottom: 12px; line-height: 1.5; }
+        .settings-btn {
+            display: block; width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--green-main), var(--green-dark));
+            color: var(--white); font-size: 1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; box-shadow: 0 3px 10px rgba(26,94,58,0.3);
+        }
+        .settings-btn:active { transform: scale(0.97); }
+        .settings-btn.update-btn {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            box-shadow: 0 3px 10px rgba(211,84,0,0.3); font-size: 1.15rem; padding: 16px;
+        }
+        .settings-version { text-align: center; margin-top: 10px; color: #888; font-size: 0.85rem; }
+        .settings-about { text-align: center; line-height: 2; color: var(--green-dark); }
     </style>
 </head>
 <body>
@@ -742,6 +763,7 @@
         <button onclick="switchTab('prayer')">🕌 Намоз</button>
         <button onclick="switchTab('dua')">📖 Дуоҳо</button>
         <button onclick="switchTab('tasbih')">📿 Тасбеҳ</button>
+        <button onclick="switchTab('settings')">⚙️</button>
     </div>
 
     <header>
@@ -981,26 +1003,67 @@
         <div class="tasbih-history" id="tasbihHistory"></div>
     </div>
 
+    <!-- ==================== САҲИФАИ НАСТРОЙКА ==================== -->
+    <div class="page" id="pageSettings">
+        <h2 style="text-align:center; color:var(--green-dark); font-size:1.5rem; margin-bottom:20px;">⚙️ Танзимот</h2>
+
+        <div class="settings-section">
+            <h3 class="settings-title">🔄 Навсозии приложения</h3>
+            <p class="settings-desc">Агар приложения навсозӣ нашуда бошад, ин тугмаро зер кунед:</p>
+            <button class="settings-btn update-btn" onclick="forceUpdate()">🔄 Навсозӣ кардан (Обновить)</button>
+            <div class="settings-version" id="appVersion">Версияи ҳозира: 2.0</div>
+        </div>
+
+        <div class="settings-section">
+            <h3 class="settings-title">🗑️ Пок кардани кэш</h3>
+            <p class="settings-desc">Ҳамаи маълумоти кэшро пок мекунад ва приложенияро аз нав бор мекунад.</p>
+            <button class="settings-btn" onclick="clearAllCache()">🗑️ Пок кардани кэш</button>
+        </div>
+
+        <div class="settings-section">
+            <h3 class="settings-title">📲 Насб дар экрани асосӣ</h3>
+            <p class="settings-desc">Приложенияро ба экрани асосии телефон илова кунед:</p>
+            <button class="settings-btn" id="installBtnSettings" onclick="installApp()">📲 Насб кардан</button>
+            <p class="settings-desc" style="margin-top:8px; font-size:0.85rem;">Агар тугма кор накунад: дар Chrome ⋮ → "Добавить на главный экран"</p>
+        </div>
+
+        <div class="settings-section">
+            <h3 class="settings-title">ℹ️ Дар бораи приложения</h3>
+            <div class="settings-about">
+                <div>📛 <strong>Тақвими Мусалмон</strong></div>
+                <div style="font-family:'Amiri',serif; font-size:1.2rem; color:var(--gold);">تقویم المسلمان</div>
+                <div>📅 Тақвими Ҳиҷрӣ ва Мелодӣ</div>
+                <div>🕌 Вақтҳои намоз ва Қибла</div>
+                <div>📖 Дуоҳои Қуръонӣ ва Ҳадис</div>
+                <div>📿 Тасбеҳи рақамӣ</div>
+                <div style="margin-top:10px; color:#888;">Версияи 2.0 — 2026</div>
+                <div style="color:#888;">Барои мусулмонони тоҷик</div>
+            </div>
+        </div>
+    </div>
+
     <div class="gold-divider"></div>
     <footer>
         <div class="footer-bismillah">﷽</div>
         <div>Тақвими Мусалмон — Барои мусулмонони тоҷик</div>
-        <div class="footer-version">Версияи 1.0</div>
+        <div class="footer-version">Версияи 2.0</div>
     </footer>
 
     <script>
         // ===================== ТАБҲО =====================
-        const PAGES = ['calendar', 'prayer', 'dua', 'tasbih'];
+        const PAGES = ['calendar', 'prayer', 'dua', 'tasbih', 'settings'];
         function switchTab(tab) {
             document.getElementById('pageCalendar').classList.toggle('active', tab === 'calendar');
             document.getElementById('pagePrayer').classList.toggle('active', tab === 'prayer');
             document.getElementById('pageDua').classList.toggle('active', tab === 'dua');
             document.getElementById('pageTasbih').classList.toggle('active', tab === 'tasbih');
+            document.getElementById('pageSettings').classList.toggle('active', tab === 'settings');
             let btns = document.querySelectorAll('.tab-bar button');
             btns[0].classList.toggle('active', tab === 'calendar');
             btns[1].classList.toggle('active', tab === 'prayer');
             btns[2].classList.toggle('active', tab === 'dua');
             btns[3].classList.toggle('active', tab === 'tasbih');
+            btns[4].classList.toggle('active', tab === 'settings');
             if (tab === 'prayer') { showPrayerDate(); showPrayers(); showWeek(); updateClock(); renderWorldClocks(); initQibla(); }
             if (tab === 'dua') { renderDuas(); }
             if (tab === 'tasbih') { loadTasbihState(); }
@@ -2057,6 +2120,33 @@
                         <span class="dhikr-count">${h.count}×</span>
                     </div>`
                 ).join('');
+        }
+
+        // ===================== НАСТРОЙКА =====================
+        function forceUpdate() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(regs => {
+                    regs.forEach(r => r.unregister());
+                });
+            }
+            caches.keys().then(keys => {
+                Promise.all(keys.map(k => caches.delete(k))).then(() => {
+                    window.location.reload(true);
+                });
+            });
+        }
+
+        function clearAllCache() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(regs => {
+                    regs.forEach(r => r.unregister());
+                });
+            }
+            caches.keys().then(keys => {
+                Promise.all(keys.map(k => caches.delete(k)));
+            });
+            localStorage.clear();
+            window.location.reload(true);
         }
 
         // ===================== ОҒОЗ =====================
