@@ -1339,21 +1339,8 @@
 
         // ===================== СОАТ =====================
         const WORLD_CITIES = [
-            { name: 'Душанбе', country: 'Тоҷикистон', tz: 'Asia/Dushanbe', icon: '🇹🇯', utc: 5 },
             { name: 'Макка', country: 'Арабистони Саудӣ', tz: 'Asia/Riyadh', icon: '🕋', utc: 3 },
             { name: 'Маскав', country: 'Русия', tz: 'Europe/Moscow', icon: '🇷🇺', utc: 3 },
-            { name: 'Истамбул', country: 'Туркия', tz: 'Europe/Istanbul', icon: '🇹🇷', utc: 3 },
-            { name: 'Дубай', country: 'Аморатҳо', tz: 'Asia/Dubai', icon: '🇦🇪', utc: 4 },
-            { name: 'Теҳрон', country: 'Эрон', tz: 'Asia/Tehran', icon: '🇮🇷', utc: 3.5 },
-            { name: 'Исламобод', country: 'Покистон', tz: 'Asia/Karachi', icon: '🇵🇰', utc: 5 },
-            { name: 'Тошканд', country: 'Ӯзбекистон', tz: 'Asia/Tashkent', icon: '🇺🇿', utc: 5 },
-            { name: 'Бишкек', country: 'Қирғизистон', tz: 'Asia/Bishkek', icon: '🇰🇬', utc: 6 },
-            { name: 'Лондон', country: 'Англия', tz: 'Europe/London', icon: '🇬🇧', utc: 0 },
-            { name: 'Пекин', country: 'Чин', tz: 'Asia/Shanghai', icon: '🇨🇳', utc: 8 },
-            { name: 'Ню-Йорк', country: 'ИМА', tz: 'America/New_York', icon: '🇺🇸', utc: -5 },
-            { name: 'Қоҳира', country: 'Миср', tz: 'Africa/Cairo', icon: '🇪🇬', utc: 2 },
-            { name: 'Ҷакарта', country: 'Индонезия', tz: 'Asia/Jakarta', icon: '🇮🇩', utc: 7 },
-            { name: 'Куала-Лумпур', country: 'Малайзия', tz: 'Asia/Kuala_Lumpur', icon: '🇲🇾', utc: 8 },
         ];
 
         function getTimeInTZ(tz) {
@@ -1748,7 +1735,7 @@
             navigator.serviceWorker.register('sw.js').then(reg => { reg.update(); });
             if ('caches' in window) {
                 caches.keys().then(keys => {
-                    keys.forEach(key => { if (key !== 'islamic-calendar-v5') caches.delete(key); });
+                    keys.forEach(key => { if (key !== 'islamic-calendar-v6') caches.delete(key); });
                 });
             }
         }
