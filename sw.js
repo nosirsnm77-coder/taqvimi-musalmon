@@ -1,4 +1,4 @@
-const CACHE_NAME = 'islamic-calendar-v3';
+const CACHE_NAME = 'islamic-calendar-v4';
 const ASSETS = [
     './',
     './index.html',
@@ -29,16 +29,26 @@ self.addEventListener('activate', event => {
     self.clients.claim();
 });
 
-// Ҷавоб додан — аввал кэш, баъд шабака
+// Ҷавоб додан
 self.addEventListener('fetch', event => {
+    let url = new URL(event.request.url);
+
+    // API дархостҳоро ҲЕҶ ГОҲ кэш накун — ҳамеша аз шабака гир
+    if (url.hostname !== location.hostname) {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+
+    // Барои файлҳои худӣ: аввал шабака, баъд кэш (network-first)
     event.respondWith(
-        caches.match(event.request).then(cached => {
-            return cached || fetch(event.request).then(response => {
-                return caches.open(CACHE_NAME).then(cache => {
-                    cache.put(event.request, response.clone());
-                    return response;
-                });
+        fetch(event.request).then(response => {
+            let clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+            return response;
+        }).catch(() => {
+            return caches.match(event.request).then(cached => {
+                return cached || caches.match('./index.html');
             });
-        }).catch(() => caches.match('./index.html'))
+        })
     );
 });

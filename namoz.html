@@ -389,9 +389,9 @@
         </div>
     </div>
 
-    <!-- Ҳафтагӣ -->
+    <!-- 3 рӯз -->
     <div class="week-card">
-        <h2>📅 Вақтҳои намоз барои ҳафта</h2>
+        <h2>📅 Вақтҳои намоз — 3 рӯз</h2>
         <table class="week-table">
             <thead>
                 <tr>
@@ -411,39 +411,158 @@
     <div class="info-card">
         <h3>ℹ️ Дар бораи ҳисобкунӣ</h3>
         <p>
-            Вақтҳои намоз тибқи усули Ҳанафӣ ҳисоб карда мешаванд.
-            Фаҷр: 18°, Ишо: 18°, Аср: соя ду баробар.
-            Вақтҳо тақрибианд — лутфан бо тақвими масҷиди маҳаллии худ муқоиса кунед.
+            Вақтҳои намоз аз сайти расмии takvim.tj гирифта мешаванд
+            (Маркази Исломии Ҷумҳурии Тоҷикистон).
+            Минтақаи вақтӣ: Тоҷикистон (UTC+5).
+            Ҳар рӯз автоматикӣ нав мешавад.
         </p>
     </div>
 
-    <footer>Вақтҳои намоз — Бисмиллоҳир Раҳмонир Раҳим</footer>
+    <footer>Вақтҳои намоз — Бисмиллоҳир Раҳмонир Раҳим <span style="font-size:0.7em;color:#ccc;">v4</span></footer>
 
     <script>
-        // === Шаҳрҳо (ному координатҳо) ===
+        // === Service Worker навсозӣ ===
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                reg.update(); // Ҳамеша тафтиш кунед, ки нусхаи нав ҳаст ё не
+            });
+            // Кэши кӯҳнаро тоза кунед
+            if ('caches' in window) {
+                caches.keys().then(keys => {
+                    keys.forEach(key => {
+                        if (key !== 'islamic-calendar-v4') caches.delete(key);
+                    });
+                });
+            }
+        }
+    </script>
+
+    <script>
+        // === Шаҳрҳо бо shift аз takvim.tj ===
+        // shift = тағйироти дақиқавӣ нисбат ба Душанбе (аз takvim.tj)
         const CITIES = {
-            dushanbe:    { name: 'Душанбе',    lat: 38.5598, lng: 68.7740, tz: 5 },
-            khujand:     { name: 'Хуҷанд',     lat: 40.2833, lng: 69.6333, tz: 5 },
-            kulob:       { name: 'Кӯлоб',      lat: 37.9137, lng: 69.7850, tz: 5 },
-            bokhtar:     { name: 'Бохтар',      lat: 37.8364, lng: 68.7847, tz: 5 },
-            istaravshan: { name: 'Истаравшан',  lat: 39.9142, lng: 69.0033, tz: 5 },
-            khorog:      { name: 'Хоруғ',       lat: 37.5361, lng: 71.5111, tz: 5 },
-            panjakent:   { name: 'Панҷакент',   lat: 39.4939, lng: 67.6108, tz: 5 },
-            tursunzoda:  { name: 'Турсунзода',  lat: 38.5128, lng: 68.2314, tz: 5 },
-            isfara:      { name: 'Исфара',      lat: 40.1264, lng: 70.6253, tz: 5 },
-            vahdat:      { name: 'Ваҳдат',      lat: 38.5561, lng: 69.0172, tz: 5 },
+            dushanbe:    { name: 'Душанбе',       shift: 0 },
+            khujand:     { name: 'Хуҷанд',        shift: -7 },
+            kulob:       { name: 'Кӯлоб',         shift: -5 },
+            bokhtar:     { name: 'Бохтар',         shift: 4 },
+            istaravshan: { name: 'Истаравшан',     shift: -5 },
+            khorog:      { name: 'Хоруғ',          shift: -12 },
+            panjakent:   { name: 'Панҷакент',      shift: 5 },
+            tursunzoda:  { name: 'Турсунзода',     shift: 0 },
+            isfara:      { name: 'Исфара',         shift: -9 },
+            vahdat:      { name: 'Ваҳдат',         shift: 0 },
         };
+
+        // Душанбе координатҳо (барои Aladhan API)
+        const DUSHANBE_LAT = 38.5598;
+        const DUSHANBE_LNG = 68.7740;
+        // tune = тағйироти дақиқавӣ барои мувофиқ кардани Aladhan бо takvim.tj
+        // Формат: Imsak,Fajr,Sunrise,Dhuhr,Asr,Sunset,Maghrib,Isha,Midnight
+        const ALADHAN_TUNE = '0,-1,2,7,-11,8,0,8,0';
 
         const WEEK_DAYS_FULL = ['Якшанбе', 'Душанбе', 'Сешанбе', 'Чоршанбе', 'Панҷшанбе', 'Ҷумъа', 'Шанбе'];
         const MILADI_MONTHS = ['Январ','Феврал','Март','Апрел','Май','Июн','Июл','Август','Сентябр','Октябр','Ноябр','Декабр'];
         const HIJRI_MONTHS = ['Муҳаррам','Сафар','Рабеъул-Аввал','Рабеъус-Сонӣ','Ҷумодул-Аввал','Ҷумодус-Сонӣ','Раҷаб','Шаъбон','Рамазон','Шаввол','Зулқаъда','Зулҳиҷҷа'];
 
         let currentCity = 'dushanbe';
+        let dushanbeCache = {}; // "YYYY-MM-DD" -> { fajr, sunrise, dhuhr, asr, maghrib, isha }
 
-        // === Ҳисобкунии вақтҳои намоз (астрономӣ) ===
-        const DEG = Math.PI / 180;
-        const RAD = 180 / Math.PI;
+        // === Вақти Тоҷикистон (UTC+5) ===
+        function getTajikistanNow() {
+            let now = new Date();
+            let utc = now.getTime() + now.getTimezoneOffset() * 60000;
+            return new Date(utc + 5 * 3600000);
+        }
 
+        // Табдили вақт бо дақиқа
+        function addMinutes(timeStr, minutes) {
+            if (!timeStr || timeStr === '--:--') return '--:--';
+            let parts = timeStr.split(':');
+            let h = parseInt(parts[0]);
+            let m = parseInt(parts[1]);
+            let total = h * 60 + m + minutes;
+            if (total < 0) total += 1440;
+            if (total >= 1440) total -= 1440;
+            return String(Math.floor(total / 60)).padStart(2, '0') + ':' + String(total % 60).padStart(2, '0');
+        }
+
+        // Табдили "HH:MM" ба соат
+        function timeToHours(timeStr) {
+            if (!timeStr || timeStr === '--:--') return null;
+            let parts = timeStr.split(':');
+            return parseInt(parts[0]) + parseInt(parts[1]) / 60;
+        }
+
+        function dateKey(date) {
+            let d = String(date.getDate()).padStart(2, '0');
+            let m = String(date.getMonth() + 1).padStart(2, '0');
+            return date.getFullYear() + '-' + m + '-' + d;
+        }
+
+        function dateDDMMYYYY(date) {
+            let d = String(date.getDate()).padStart(2, '0');
+            let m = String(date.getMonth() + 1).padStart(2, '0');
+            return d + '-' + m + '-' + date.getFullYear();
+        }
+
+        // === Aladhan API — вақтҳои Душанбе ===
+        async function fetchDushanbeTimes(date) {
+            let key = dateKey(date);
+            if (dushanbeCache[key]) return dushanbeCache[key];
+
+            // Аз localStorage
+            try {
+                let cached = localStorage.getItem('namoz_' + key);
+                if (cached) {
+                    dushanbeCache[key] = JSON.parse(cached);
+                    return dushanbeCache[key];
+                }
+            } catch(e) {}
+
+            // Аз Aladhan API (CORS кор мекунад!)
+            try {
+                let url = 'https://api.aladhan.com/v1/timings/' + dateDDMMYYYY(date)
+                    + '?latitude=' + DUSHANBE_LAT
+                    + '&longitude=' + DUSHANBE_LNG
+                    + '&method=1&school=1&tune=' + ALADHAN_TUNE
+                    + '&timezonestring=Asia/Dushanbe';
+                let controller = new AbortController();
+                setTimeout(() => controller.abort(), 10000);
+                let resp = await fetch(url, { signal: controller.signal });
+                let data = await resp.json();
+                let t = data.data.timings;
+                let times = {
+                    fajr: t.Fajr,
+                    sunrise: t.Sunrise,
+                    dhuhr: t.Dhuhr,
+                    asr: t.Asr,
+                    maghrib: t.Maghrib,
+                    isha: t.Isha
+                };
+                dushanbeCache[key] = times;
+                try { localStorage.setItem('namoz_' + key, JSON.stringify(times)); } catch(e) {}
+                return times;
+            } catch(e) {
+                return null;
+            }
+        }
+
+        // Вақтҳо барои ҳар як шаҳр = Душанбе + shift
+        function getCityTimes(dushanbeTimes, cityKey) {
+            if (!dushanbeTimes) return null;
+            let shift = CITIES[cityKey].shift;
+            if (shift === 0) return dushanbeTimes;
+            return {
+                fajr: addMinutes(dushanbeTimes.fajr, shift),
+                sunrise: addMinutes(dushanbeTimes.sunrise, shift),
+                dhuhr: addMinutes(dushanbeTimes.dhuhr, shift),
+                asr: addMinutes(dushanbeTimes.asr, shift),
+                maghrib: addMinutes(dushanbeTimes.maghrib, shift),
+                isha: addMinutes(dushanbeTimes.isha, shift),
+            };
+        }
+
+        // === Ҳиҷрӣ ===
         function julianDate(year, month, day) {
             if (month <= 2) { year--; month += 12; }
             let A = Math.floor(year / 100);
@@ -451,73 +570,6 @@
             return Math.floor(365.25 * (year + 4716)) + Math.floor(30.6001 * (month + 1)) + day + B - 1524.5;
         }
 
-        function sunPosition(jd) {
-            let D = jd - 2451545.0;
-            let g = (357.529 + 0.98560028 * D) % 360;
-            let q = (280.459 + 0.98564736 * D) % 360;
-            let L = (q + 1.915 * Math.sin(g * DEG) + 0.020 * Math.sin(2 * g * DEG)) % 360;
-            let e = 23.439 - 0.00000036 * D;
-            let RA = Math.atan2(Math.cos(e * DEG) * Math.sin(L * DEG), Math.cos(L * DEG)) * RAD;
-            let dec = Math.asin(Math.sin(e * DEG) * Math.sin(L * DEG)) * RAD;
-            let EqT = q - RA;
-            if (EqT > 180) EqT -= 360;
-            if (EqT < -180) EqT += 360;
-            return { dec, EqT };
-        }
-
-        function hourAngle(lat, dec, angle) {
-            let cos_ha = (Math.sin(angle * DEG) - Math.sin(lat * DEG) * Math.sin(dec * DEG)) /
-                         (Math.cos(lat * DEG) * Math.cos(dec * DEG));
-            if (cos_ha > 1) return null;  // Намеравад
-            if (cos_ha < -1) return null;
-            return Math.acos(cos_ha) * RAD;
-        }
-
-        function asrTime(lat, dec, factor) {
-            let a = Math.atan(1 / (factor + Math.tan(Math.abs(lat - dec) * DEG))) * RAD;
-            return hourAngle(lat, dec, a);
-        }
-
-        function formatTime(hours) {
-            if (hours === null || isNaN(hours)) return '--:--';
-            let h = Math.floor(hours);
-            let m = Math.round((hours - h) * 60);
-            if (m === 60) { h++; m = 0; }
-            return String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0');
-        }
-
-        function calculatePrayer(date, lat, lng, tz) {
-            let jd = julianDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
-            let sun = sunPosition(jd);
-
-            let transit = 12 + (- sun.EqT / 15) - (lng / 15) + tz;
-
-            // Субҳ (Фаҷр) — 18° зери уфуқ
-            let ha_fajr = hourAngle(lat, sun.dec, -18);
-            let fajr = ha_fajr !== null ? transit - ha_fajr / 15 : null;
-
-            // Офтоббарорӣ — -0.833° (бо рефракция)
-            let ha_sun = hourAngle(lat, sun.dec, -0.833);
-            let sunrise = ha_sun !== null ? transit - ha_sun / 15 : null;
-
-            // Пешин (Зуҳр)
-            let dhuhr = transit + 2 / 60; // 2 дақиқа баъд аз transit
-
-            // Аср — соя 2 баробар (Ҳанафӣ)
-            let ha_asr = asrTime(lat, sun.dec, 2);
-            let asr = ha_asr !== null ? transit + ha_asr / 15 : null;
-
-            // Шом (Мағриб)
-            let maghrib = ha_sun !== null ? transit + ha_sun / 15 : null;
-
-            // Хуфтан (Ишо) — 18° зери уфуқ
-            let ha_isha = hourAngle(lat, sun.dec, -18);
-            let isha = ha_isha !== null ? transit + ha_isha / 15 : null;
-
-            return { fajr, sunrise, dhuhr, asr, maghrib, isha };
-        }
-
-        // === Ҳиҷрӣ ===
         function gregorianToHijri(gYear, gMonth, gDay) {
             let jd = julianDate(gYear, gMonth, gDay);
             jd = Math.floor(jd) + 0.5;
@@ -531,7 +583,7 @@
 
         // === Намоиш ===
         function showDate() {
-            let now = new Date();
+            let now = getTajikistanNow();
             let dow = WEEK_DAYS_FULL[now.getDay()];
             document.getElementById('todayDate').textContent =
                 dow + ', ' + now.getDate() + ' ' + MILADI_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
@@ -541,31 +593,42 @@
                 h.day + ' ' + HIJRI_MONTHS[h.month - 1] + ' ' + h.year + ' ҳиҷрӣ';
         }
 
-        function showPrayers() {
-            let city = CITIES[currentCity];
-            let now = new Date();
-            let times = calculatePrayer(now, city.lat, city.lng, city.tz);
+        async function showPrayers() {
+            let now = getTajikistanNow();
+            let dushanbeTimes = await fetchDushanbeTimes(now);
+            let times = getCityTimes(dushanbeTimes, currentCity);
 
-            document.getElementById('timeFajr').textContent = formatTime(times.fajr);
-            document.getElementById('timeSunrise').textContent = formatTime(times.sunrise);
-            document.getElementById('timeDhuhr').textContent = formatTime(times.dhuhr);
-            document.getElementById('timeAsr').textContent = formatTime(times.asr);
-            document.getElementById('timeMaghrib').textContent = formatTime(times.maghrib);
-            document.getElementById('timeIsha').textContent = formatTime(times.isha);
+            if (!times) {
+                ['timeFajr','timeSunrise','timeDhuhr','timeAsr','timeMaghrib','timeIsha'].forEach(id => {
+                    document.getElementById(id).textContent = '--:--';
+                });
+                document.getElementById('cityCoords').textContent = 'Интернет пайваст нест — саҳифаро нав кунед';
+                return;
+            }
 
-            document.getElementById('cityCoords').textContent =
-                'Арзи ҷуғрофӣ: ' + city.lat.toFixed(2) + '°  Тӯли ҷуғрофӣ: ' + city.lng.toFixed(2) + '°';
+            document.getElementById('timeFajr').textContent = times.fajr;
+            document.getElementById('timeSunrise').textContent = times.sunrise;
+            document.getElementById('timeDhuhr').textContent = times.dhuhr;
+            document.getElementById('timeAsr').textContent = times.asr;
+            document.getElementById('timeMaghrib').textContent = times.maghrib;
+            document.getElementById('timeIsha').textContent = times.isha;
+
+            document.getElementById('cityCoords').textContent = 'Сарчашма: Маркази Исломии Ҷумҳурии Тоҷикистон (takvim.tj)';
 
             // Нишон додани намози ҷорӣ
             let currentHour = now.getHours() + now.getMinutes() / 60;
             let prayerIds = ['rowFajr', 'rowSunrise', 'rowDhuhr', 'rowAsr', 'rowMaghrib', 'rowIsha'];
-            let prayerTimes = [times.fajr, times.sunrise, times.dhuhr, times.asr, times.maghrib, times.isha];
+            let prayerHours = [
+                timeToHours(times.fajr), timeToHours(times.sunrise),
+                timeToHours(times.dhuhr), timeToHours(times.asr),
+                timeToHours(times.maghrib), timeToHours(times.isha)
+            ];
 
             prayerIds.forEach(id => document.getElementById(id).classList.remove('active'));
 
             let activeIdx = -1;
-            for (let i = prayerTimes.length - 1; i >= 0; i--) {
-                if (prayerTimes[i] !== null && currentHour >= prayerTimes[i]) {
+            for (let i = prayerHours.length - 1; i >= 0; i--) {
+                if (prayerHours[i] !== null && currentHour >= prayerHours[i]) {
                     activeIdx = i;
                     break;
                 }
@@ -575,56 +638,67 @@
             }
         }
 
-        function showWeek() {
+        async function showDays() {
             let body = document.getElementById('weekBody');
-            body.innerHTML = '';
-            let city = CITIES[currentCity];
-            let now = new Date();
-            let todayStr = now.toDateString();
+            body.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:20px;color:#aaa;">Боргирӣ...</td></tr>';
+            let now = getTajikistanNow();
+            let dayNames = ['Имрӯз', 'Пагоҳ', 'Пасфардо'];
 
-            // Рӯзи аввали ҳафта (якшанбе)
-            let startDay = new Date(now);
-            startDay.setDate(now.getDate() - now.getDay());
-
-            for (let i = 0; i < 7; i++) {
-                let d = new Date(startDay);
-                d.setDate(startDay.getDate() + i);
-                let times = calculatePrayer(d, city.lat, city.lng, city.tz);
-                let isToday = d.toDateString() === todayStr;
+            let rows = [];
+            for (let i = 0; i < 3; i++) {
+                let d = new Date(now);
+                d.setDate(now.getDate() + i);
+                let dushanbeTimes = await fetchDushanbeTimes(d);
+                let times = getCityTimes(dushanbeTimes, currentCity);
 
                 let tr = document.createElement('tr');
-                if (isToday) tr.className = 'today-row';
+                if (i === 0) tr.className = 'today-row';
 
-                let dayName = WEEK_DAYS_FULL[d.getDay()];
-                let short = dayName.substring(0, 3);
-
-                tr.innerHTML = `
-                    <td class="day-col">${short} ${d.getDate()}</td>
-                    <td>${formatTime(times.fajr)}</td>
-                    <td>${formatTime(times.sunrise)}</td>
-                    <td>${formatTime(times.dhuhr)}</td>
-                    <td>${formatTime(times.asr)}</td>
-                    <td>${formatTime(times.maghrib)}</td>
-                    <td>${formatTime(times.isha)}</td>
-                `;
-                body.appendChild(tr);
+                let dateStr = d.getDate() + '/' + (d.getMonth() + 1);
+                if (times) {
+                    tr.innerHTML = `
+                        <td class="day-col">${dayNames[i]} ${dateStr}</td>
+                        <td>${times.fajr}</td>
+                        <td>${times.sunrise}</td>
+                        <td>${times.dhuhr}</td>
+                        <td>${times.asr}</td>
+                        <td>${times.maghrib}</td>
+                        <td>${times.isha}</td>
+                    `;
+                } else {
+                    tr.innerHTML = `<td class="day-col">${dayNames[i]} ${dateStr}</td><td colspan="6" style="color:#aaa;">—</td>`;
+                }
+                rows.push(tr);
             }
+
+            body.innerHTML = '';
+            rows.forEach(tr => body.appendChild(tr));
         }
 
-        function onCityChange() {
+        async function onCityChange() {
             currentCity = document.getElementById('citySelect').value;
-            showPrayers();
-            showWeek();
+            await showPrayers();
+            await showDays();
         }
 
         // === Оғоз ===
+        let lastDate = getTajikistanNow().getDate();
         showDate();
         showPrayers();
-        showWeek();
+        showDays();
 
         // Ҳар 60 сония навсозӣ
         setInterval(() => {
-            showPrayers();
+            let tj = getTajikistanNow();
+            if (tj.getDate() !== lastDate) {
+                lastDate = tj.getDate();
+                dushanbeCache = {};
+                showDate();
+                showPrayers();
+                showDays();
+            } else {
+                showPrayers();
+            }
         }, 60000);
     </script>
 </body>

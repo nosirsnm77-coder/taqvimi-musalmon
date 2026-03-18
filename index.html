@@ -274,8 +274,10 @@
         .cal-grid .day-cell.today .greg-small { color: rgba(255,255,255,0.8); }
         .cal-grid .day-cell .hijri-day { font-weight: 600; font-size: 1em; }
         .cal-grid .day-cell .greg-small { font-size: 0.65em; color: #aaa; margin-top: 2px; }
-        .cal-grid .day-cell.holiday { color: var(--gold); font-weight: 700; }
-        .cal-grid .day-cell.today.holiday { background: linear-gradient(135deg, var(--green-main), var(--gold)); color: var(--white); }
+        .cal-grid .day-cell.holiday { background: rgba(46,125,50,0.15); color: var(--green-dark); font-weight: 700; border: 2px solid var(--green-main); }
+        .cal-grid .day-cell.holiday .greg-small { color: var(--green-main); }
+        .cal-grid .day-cell.today.holiday { background: linear-gradient(135deg, var(--green-main), var(--green-dark)); color: var(--white); border: 2px solid var(--gold); }
+        .cal-grid .day-cell.today.holiday .greg-small { color: rgba(255,255,255,0.8); }
         .cal-grid .day-cell.empty { cursor: default; }
         .cal-grid .day-cell.juma { color: var(--green-dark); font-weight: 700; }
         .cal-grid .day-cell.today.juma { color: var(--white); }
@@ -311,8 +313,8 @@
             border: 6px solid transparent;
             border-top-color: var(--green-dark);
         }
-        .day-tooltip.holiday-tip { background: var(--gold); }
-        .day-tooltip.holiday-tip::after { border-top-color: var(--gold); }
+        .day-tooltip.holiday-tip { background: var(--green-main); }
+        .day-tooltip.holiday-tip::after { border-top-color: var(--green-main); }
         .day-cell:hover .day-tooltip,
         .day-cell.show-tip .day-tooltip { display: block; }
 
@@ -346,8 +348,8 @@
             border: 5px solid transparent;
             border-top-color: var(--green-dark);
         }
-        .mday-tooltip.holiday-tip { background: var(--gold); }
-        .mday-tooltip.holiday-tip::after { border-top-color: var(--gold); }
+        .mday-tooltip.holiday-tip { background: var(--green-main); }
+        .mday-tooltip.holiday-tip::after { border-top-color: var(--green-main); }
         .mday:hover .mday-tooltip,
         .mday.show-tip .mday-tooltip { display: block; }
 
@@ -376,7 +378,7 @@
         .mini-grid .mday-header { text-align: center; font-size: 0.65em; color: var(--green-main); font-weight: 600; padding: 4px 0; }
         .mini-grid .mday { text-align: center; padding: 4px 1px; border-radius: 6px; font-size: 0.8em; min-height: 28px; display: flex; align-items: center; justify-content: center; }
         .mini-grid .mday.today { background: var(--green-main); color: var(--white); border-radius: 50%; font-weight: 700; }
-        .mini-grid .mday.holiday { color: var(--gold); font-weight: 700; }
+        .mini-grid .mday.holiday { background: rgba(46,125,50,0.15); color: var(--green-dark); font-weight: 700; border: 2px solid var(--green-main); }
         .mini-grid .mday.juma { color: var(--green-dark); font-weight: 700; }
 
         .holidays-section {
@@ -1711,7 +1713,14 @@
                 deferredPrompt.userChoice.then(() => { deferredPrompt=null; document.getElementById('installBtn').style.display='none'; });
             }
         }
-        if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').then(reg => { reg.update(); });
+            if ('caches' in window) {
+                caches.keys().then(keys => {
+                    keys.forEach(key => { if (key !== 'islamic-calendar-v4') caches.delete(key); });
+                });
+            }
+        }
 
         // ===================== ДУОҲО =====================
         const DUAS = [
