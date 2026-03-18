@@ -469,8 +469,7 @@
             font-size: 3.5em; font-weight: 700; color: var(--green-dark);
             font-variant-numeric: tabular-nums; letter-spacing: 2px;
         }
-        .clock-seconds { font-size: 0.5em; color: var(--gold); vertical-align: super; }
-        .clock-date { font-size: 1em; color: #888; margin-top: 5px; }
+        .clock-date { font-size: 1em; color: var(--gold); margin-top: 8px; font-weight: 600; }
         .clock-label { font-size: 0.85em; color: var(--green-main); font-weight: 600; margin-bottom: 5px; }
 
         .world-clock-card {
@@ -825,10 +824,10 @@
     <!-- ==================== САҲИФАИ НАМОЗ ==================== -->
     <div class="page" id="pagePrayer">
 
-        <!-- Соат -->
+        <!-- Намози оянда -->
         <div class="clock-card">
-            <div class="clock-label" id="clockCity">🕌 Душанбе</div>
-            <div class="clock-main" id="clockMain">--:--<span class="clock-seconds" id="clockSec">00</span></div>
+            <div class="clock-label" id="clockCity">🕌 Намози оянда</div>
+            <div class="clock-main" id="clockMain">--:--</div>
             <div class="clock-date" id="clockDate"></div>
         </div>
 
@@ -1367,15 +1366,47 @@
 
         function updateClock() {
             let now = new Date();
-            let h = String(now.getHours()).padStart(2,'0');
-            let m = String(now.getMinutes()).padStart(2,'0');
-            let s = String(now.getSeconds()).padStart(2,'0');
-            document.getElementById('clockMain').innerHTML = h + ':' + m + '<span class="clock-seconds">' + s + '</span>';
-
+            let currentHour = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
             let city = CITIES[currentCity];
-            document.getElementById('clockCity').textContent = '🕌 ' + city.name;
-            document.getElementById('clockDate').textContent =
-                WEEK_DAYS_FULL[now.getDay()] + ', ' + now.getDate() + ' ' + MILADI_MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+            let times = calculatePrayer(now, city.lat, city.lng, city.tz);
+
+            // Номи намозҳо (бе Офтоббарорӣ — он намоз нест)
+            let prayers = [
+                { name: 'Субҳ (Фаҷр)', icon: '🌙', time: times.fajr },
+                { name: 'Пешин (Зуҳр)', icon: '☀️', time: times.dhuhr },
+                { name: 'Аср (Дигар)', icon: '🌤', time: times.asr },
+                { name: 'Шом (Мағриб)', icon: '🌇', time: times.maghrib },
+                { name: 'Хуфтан (Ишо)', icon: '🌃', time: times.isha },
+            ];
+
+            // Ёфтани намози оянда
+            let nextPrayer = null;
+            for (let p of prayers) {
+                if (p.time !== null && currentHour < p.time) {
+                    nextPrayer = p;
+                    break;
+                }
+            }
+
+            if (nextPrayer) {
+                // Вақти боқимонда
+                let diffMin = Math.floor((nextPrayer.time - currentHour) * 60);
+                let diffH = Math.floor(diffMin / 60);
+                let diffM = diffMin % 60;
+                let remaining = diffH > 0 ? diffH + ' соат ' + diffM + ' дақ.' : diffM + ' дақиқа';
+
+                document.getElementById('clockCity').textContent = nextPrayer.icon + ' Намози оянда: ' + nextPrayer.name;
+                document.getElementById('clockMain').textContent = formatTime(nextPrayer.time);
+                document.getElementById('clockDate').textContent = 'Баъди ' + remaining;
+            } else {
+                // Баъди Хуфтан — намози оянда Субҳи пагоҳ
+                let tomorrow = new Date(now);
+                tomorrow.setDate(now.getDate() + 1);
+                let tomorrowTimes = calculatePrayer(tomorrow, city.lat, city.lng, city.tz);
+                document.getElementById('clockCity').textContent = '🌙 Намози оянда: Субҳ (пагоҳ)';
+                document.getElementById('clockMain').textContent = formatTime(tomorrowTimes.fajr);
+                document.getElementById('clockDate').textContent = 'Пагоҳ саҳарӣ';
+            }
         }
 
         function renderWorldClocks() {
@@ -1717,7 +1748,7 @@
             navigator.serviceWorker.register('sw.js').then(reg => { reg.update(); });
             if ('caches' in window) {
                 caches.keys().then(keys => {
-                    keys.forEach(key => { if (key !== 'islamic-calendar-v4') caches.delete(key); });
+                    keys.forEach(key => { if (key !== 'islamic-calendar-v5') caches.delete(key); });
                 });
             }
         }

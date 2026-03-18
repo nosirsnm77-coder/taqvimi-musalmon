@@ -1,4 +1,4 @@
-const CACHE_NAME = 'islamic-calendar-v4';
+const CACHE_NAME = 'islamic-calendar-v5';
 const ASSETS = [
     './',
     './index.html',
