@@ -472,31 +472,6 @@
         .clock-date { font-size: 1em; color: var(--gold); margin-top: 8px; font-weight: 600; }
         .clock-label { font-size: 0.85em; color: var(--green-main); font-weight: 600; margin-bottom: 5px; }
 
-        .world-clock-card {
-            background: var(--white); border-radius: 20px; padding: 20px;
-            margin: 0 15px 15px; max-width: 500px; width: calc(100% - 30px);
-            box-shadow: var(--shadow);
-        }
-        .world-clock-card h2 { text-align: center; color: var(--green-dark); margin-bottom: 15px; font-size: 1.1em; }
-
-        .world-row {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 12px; border-radius: 10px; margin-bottom: 6px;
-            transition: background 0.2s;
-        }
-        .world-row:hover { background: #f5f5f5; }
-        .world-row:last-child { margin-bottom: 0; }
-        .world-row .w-city { font-weight: 600; font-size: 0.95em; }
-        .world-row .w-country { font-size: 0.75em; color: #aaa; }
-        .world-row .w-time {
-            font-size: 1.3em; font-weight: 700; color: var(--green-dark);
-            font-variant-numeric: tabular-nums;
-        }
-        .world-row .w-diff { font-size: 0.7em; color: #bbb; }
-        .world-row.current { background: #e8f5e9; }
-        .world-row .w-icon { font-size: 1.2em; margin-right: 10px; }
-        .world-row .w-left { display: flex; align-items: center; }
-        .world-row .w-right { text-align: right; }
 
         /* === ҚИБЛА === */
         .qibla-card {
@@ -831,11 +806,6 @@
             <div class="clock-date" id="clockDate"></div>
         </div>
 
-        <!-- Вақтҳои ҷаҳонӣ -->
-        <div class="world-clock-card">
-            <h2>🌍 Вақти ҷаҳонӣ</h2>
-            <div id="worldClocks"></div>
-        </div>
 
         <div class="city-section">
             <label>🏙 Шаҳр:</label>
@@ -1065,7 +1035,7 @@
             btns[2].classList.toggle('active', tab === 'dua');
             btns[3].classList.toggle('active', tab === 'tasbih');
             btns[4].classList.toggle('active', tab === 'settings');
-            if (tab === 'prayer') { showPrayerDate(); showPrayers(); showWeek(); updateClock(); renderWorldClocks(); initQibla(); }
+            if (tab === 'prayer') { showPrayerDate(); showPrayers(); showWeek(); updateClock(); initQibla(); }
             if (tab === 'dua') { renderDuas(); }
             if (tab === 'tasbih') { loadTasbihState(); }
             window.scrollTo(0, 0);
@@ -1337,20 +1307,7 @@
             }
         }
 
-        // ===================== СОАТ =====================
-        const WORLD_CITIES = [
-            { name: 'Макка', country: 'Арабистони Саудӣ', tz: 'Asia/Riyadh', icon: '🕋', utc: 3 },
-            { name: 'Маскав', country: 'Русия', tz: 'Europe/Moscow', icon: '🇷🇺', utc: 3 },
-        ];
-
-        function getTimeInTZ(tz) {
-            try {
-                let now = new Date();
-                let str = now.toLocaleString('en-GB', { timeZone: tz, hour:'2-digit', minute:'2-digit', hour12: false });
-                return str;
-            } catch(e) { return '--:--'; }
-        }
-
+        // ===================== НАМОЗИ ОЯНДА =====================
         function updateClock() {
             let now = new Date();
             let currentHour = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
@@ -1396,35 +1353,6 @@
             }
         }
 
-        function renderWorldClocks() {
-            let container = document.getElementById('worldClocks');
-            container.innerHTML = '';
-            let localUTC = CITIES[currentCity] ? CITIES[currentCity].tz : 5;
-
-            for (let c of WORLD_CITIES) {
-                let row = document.createElement('div');
-                row.className = 'world-row';
-                if (c.name === (CITIES[currentCity] ? CITIES[currentCity].name : 'Душанбе')) row.classList.add('current');
-
-                let time = getTimeInTZ(c.tz);
-                let diff = c.utc - localUTC;
-                let diffStr = diff >= 0 ? '+' + diff : '' + diff;
-
-                row.innerHTML = `
-                    <div class="w-left">
-                        <span class="w-icon">${c.icon}</span>
-                        <div>
-                            <div class="w-city">${c.name}</div>
-                            <div class="w-country">${c.country}</div>
-                        </div>
-                    </div>
-                    <div class="w-right">
-                        <div class="w-time">${time}</div>
-                        <div class="w-diff">UTC${c.utc >= 0 ? '+' : ''}${c.utc} (${diffStr}с)</div>
-                    </div>`;
-                container.appendChild(row);
-            }
-        }
 
         // ===================== ҚИБЛА =====================
         // Координатҳои Каъба
@@ -1715,8 +1643,7 @@
 
         function onCityChange() {
             currentCity = document.getElementById('citySelect').value;
-            showPrayers(); showWeek(); updateClock(); renderWorldClocks();
-            if (!navigator.geolocation || userLat === CITIES[Object.keys(CITIES)[0]]?.lat) useSelectedCity();
+            showPrayers(); showWeek(); updateClock();            if (!navigator.geolocation || userLat === CITIES[Object.keys(CITIES)[0]]?.lat) useSelectedCity();
         }
 
         // ===================== PWA =====================
@@ -1735,7 +1662,7 @@
             navigator.serviceWorker.register('sw.js').then(reg => { reg.update(); });
             if ('caches' in window) {
                 caches.keys().then(keys => {
-                    keys.forEach(key => { if (key !== 'islamic-calendar-v6') caches.delete(key); });
+                    keys.forEach(key => { if (key !== 'islamic-calendar-v7') caches.delete(key); });
                 });
             }
         }
@@ -2183,7 +2110,6 @@
         renderHolidays();
 
         setInterval(() => { updateClock(); showPrayers(); }, 1000);
-        setInterval(renderWorldClocks, 60000);
     </script>
 </body>
 </html>
