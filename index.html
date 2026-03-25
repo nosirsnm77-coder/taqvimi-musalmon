@@ -25,6 +25,23 @@
             --white: #ffffff;
             --shadow: 0 4px 20px rgba(0,0,0,0.08);
             --shadow-lg: 0 8px 30px rgba(0,0,0,0.12);
+            --card-border: #f0ece4;
+            --muted: #777;
+        }
+
+        [data-theme="dark"] {
+            --green-dark: #1a8a50;
+            --green-main: #2eaa68;
+            --green-light: #5cc98d;
+            --gold: #e0ba55;
+            --gold-light: #c9a84c;
+            --bg: #1a1a2e;
+            --text: #e0e0e0;
+            --white: #252540;
+            --shadow: 0 4px 20px rgba(0,0,0,0.3);
+            --shadow-lg: 0 8px 30px rgba(0,0,0,0.4);
+            --card-border: #333355;
+            --muted: #aaa;
         }
 
         body {
@@ -163,7 +180,7 @@
         .today-card .hijri-date { font-size: 2.5em; font-weight: 700; color: var(--green-dark); margin: 10px 0; text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .today-card .hijri-month { font-size: 1.4em; color: var(--green-main); font-weight: 600; }
         .today-card .hijri-year { font-size: 1.1em; color: var(--gold); font-weight: 600; margin-bottom: 12px; }
-        .today-card .miladi-date { font-size: 1em; color: #777; padding-top: 12px; border-top: 2px solid #f0ece4; }
+        .today-card .miladi-date { font-size: 1em; color: var(--muted); padding-top: 12px; border-top: 2px solid var(--card-border); }
         .today-card .day-name { font-size: 1.15em; color: var(--green-main); font-weight: 600; margin-bottom: 5px; letter-spacing: 0.5px; }
 
         .calendar-section {
@@ -273,7 +290,7 @@
         .cal-grid .day-cell.today { background: var(--green-main); color: var(--white); }
         .cal-grid .day-cell.today .greg-small { color: rgba(255,255,255,0.8); }
         .cal-grid .day-cell .hijri-day { font-weight: 600; font-size: 1em; }
-        .cal-grid .day-cell .greg-small { font-size: 0.65em; color: #aaa; margin-top: 2px; }
+        .cal-grid .day-cell .greg-small { font-size: 0.65em; color: #888; margin-top: 2px; }
         .cal-grid .day-cell.holiday { background: rgba(46,125,50,0.15); color: var(--green-dark); font-weight: 700; border: 2px solid var(--green-main); }
         .cal-grid .day-cell.holiday .greg-small { color: var(--green-main); }
         .cal-grid .day-cell.today.holiday { background: linear-gradient(135deg, var(--green-main), var(--green-dark)); color: var(--white); border: 2px solid var(--gold); }
@@ -405,7 +422,7 @@
             padding: 8px 15px; font-size: 1em; color: var(--green-dark); cursor: pointer; outline: none;
         }
         .city-section select:focus { border-color: var(--gold); }
-        .city-coords { margin-top: 8px; font-size: 0.8em; color: #aaa; }
+        .city-coords { margin-top: 8px; font-size: 0.8em; color: #777; }
 
         .date-card {
             background: var(--white); border-radius: 20px; padding: 20px;
@@ -413,7 +430,7 @@
             box-shadow: var(--shadow); text-align: center; border-top: 4px solid var(--gold);
         }
         .date-card .main-date { font-size: 1.2em; font-weight: 700; color: var(--green-dark); }
-        .date-card .sub-date { font-size: 0.9em; color: #888; margin-top: 5px; }
+        .date-card .sub-date { font-size: 0.9em; color: var(--muted); margin-top: 5px; }
 
         .prayer-card {
             background: var(--white); border-radius: 20px; padding: 20px;
@@ -429,7 +446,7 @@
         .prayer-row .prayer-icon { font-size: 1.5em; margin-right: 12px; }
         .prayer-row .prayer-info { flex: 1; }
         .prayer-row .prayer-name { font-weight: 700; font-size: 1.05em; }
-        .prayer-row .prayer-arabic { font-size: 0.8em; color: #aaa; }
+        .prayer-row .prayer-arabic { font-size: 0.8em; color: #777; }
         .prayer-row .prayer-time { font-size: 1.4em; font-weight: 700; color: var(--green-dark); font-variant-numeric: tabular-nums; }
 
         .prayer-row.fajr { background: linear-gradient(135deg, #e8f0fe, #f0f4ff); }
@@ -438,17 +455,40 @@
         .prayer-row.asr { background: linear-gradient(135deg, #fff3e0, #ffecd2); }
         .prayer-row.maghrib { background: linear-gradient(135deg, #fce4ec, #f8d7da); }
         .prayer-row.isha { background: linear-gradient(135deg, #ede7f6, #e8def8); }
+
+        [data-theme="dark"] .prayer-row.fajr { background: linear-gradient(135deg, #1a2340, #1f2a4a); }
+        [data-theme="dark"] .prayer-row.sunrise { background: linear-gradient(135deg, #3a3520, #403a1f); }
+        [data-theme="dark"] .prayer-row.dhuhr { background: linear-gradient(135deg, #1a3525, #1f3a28); }
+        [data-theme="dark"] .prayer-row.asr { background: linear-gradient(135deg, #3a2e1a, #40321f); }
+        [data-theme="dark"] .prayer-row.maghrib { background: linear-gradient(135deg, #3a1a25, #401f2a); }
+        [data-theme="dark"] .prayer-row.isha { background: linear-gradient(135deg, #2a1a3a, #301f40); }
+        [data-theme="dark"] .cal-grid .day-cell:hover { background: #333355; }
+        [data-theme="dark"] .cal-grid .day-cell.today { background: var(--green-main); }
+        [data-theme="dark"] .week-table tr.today-row { background: #1a3525; }
+        [data-theme="dark"] .holiday-item:hover { background: #2a2a45; }
+        [data-theme="dark"] .dua-card .dua-arabic { background: linear-gradient(135deg, #2a2a45, #333355); color: var(--gold); }
+        [data-theme="dark"] .dua-card .dua-tajik { background: #1a3525; border-left-color: var(--green-main); }
+        [data-theme="dark"] .tasbih-display { background: linear-gradient(135deg, #1a3525, #0d4a2a); }
+        [data-theme="dark"] .filter-btn { background: var(--white); color: var(--text); border-color: #444; }
+        [data-theme="dark"] .compass-ring { background: radial-gradient(circle, #2a2a45 0%, #1a1a2e 100%); }
         .prayer-row.active { box-shadow: 0 0 0 3px var(--gold); transform: scale(1.02); }
 
         .week-card {
             background: var(--white); border-radius: 20px; padding: 20px;
             margin: 0 15px 15px; max-width: 600px; width: calc(100% - 30px);
-            box-shadow: var(--shadow); overflow-x: auto;
+            box-shadow: var(--shadow); overflow-x: auto; -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+        .week-card::after {
+            content: '← → '; display: none; text-align: center; font-size: 0.7em; color: var(--muted); padding-top: 5px;
+        }
+        @media (max-width: 500px) {
+            .week-card::after { display: block; }
         }
         .week-card h2 { text-align: center; color: var(--green-dark); margin-bottom: 15px; font-size: 1.1em; }
         .week-table { width: 100%; border-collapse: collapse; font-size: 0.8em; }
         .week-table th { background: var(--green-main); color: var(--white); padding: 8px 5px; font-weight: 600; font-size: 0.85em; }
-        .week-table td { padding: 6px 5px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+        .week-table td { padding: 6px 5px; text-align: center; border-bottom: 1px solid var(--card-border); }
         .week-table tr.today-row { background: #e8f5e9; font-weight: 700; }
         .week-table .day-col { font-weight: 600; color: var(--green-dark); text-align: left; }
 
@@ -457,7 +497,7 @@
             margin: 0 15px 20px; max-width: 500px; width: calc(100% - 30px); box-shadow: var(--shadow);
         }
         .info-card h3 { color: var(--green-dark); margin-bottom: 10px; font-size: 1em; }
-        .info-card p { font-size: 0.85em; color: #777; line-height: 1.6; }
+        .info-card p { font-size: 0.85em; color: var(--muted); line-height: 1.6; }
 
         /* === СОАТ === */
         .clock-card {
@@ -628,7 +668,13 @@
         @media (max-width: 360px) {
             .cal-grid .day-cell { padding: 5px 1px; min-height: 40px; }
             .cal-grid .day-cell .hijri-day { font-size: 0.85em; }
-            .tab-bar button { padding: 12px 15px; font-size: 0.85em; }
+            .tab-bar button { padding: 12px 10px; font-size: 0.8em; }
+            .week-table { font-size: 0.7em; }
+            .week-table th { padding: 6px 3px; font-size: 0.75em; }
+            .week-table td { padding: 4px 3px; }
+            .prayer-row { padding: 10px 10px; }
+            .prayer-row .prayer-icon { font-size: 1.2em; margin-right: 8px; }
+            .prayer-row .prayer-time { font-size: 1.2em; }
         }
 
         /* ====== ТАСБЕҲ ====== */
@@ -734,13 +780,13 @@
 <body>
 
     <!-- Табҳо -->
-    <div class="tab-bar">
-        <button class="active" onclick="switchTab('calendar')">☪ Тақвим</button>
-        <button onclick="switchTab('prayer')">🕌 Намоз</button>
-        <button onclick="switchTab('dua')">📖 Дуоҳо</button>
-        <button onclick="switchTab('tasbih')">📿 Тасбеҳ</button>
-        <button onclick="switchTab('settings')">⚙️</button>
-    </div>
+    <nav class="tab-bar" role="tablist" aria-label="Саҳифаҳои асосӣ">
+        <button class="active" onclick="switchTab('calendar')" role="tab" aria-selected="true" aria-controls="pageCalendar">☪ Тақвим</button>
+        <button onclick="switchTab('prayer')" role="tab" aria-selected="false" aria-controls="pagePrayer">🕌 Намоз</button>
+        <button onclick="switchTab('dua')" role="tab" aria-selected="false" aria-controls="pageDua">📖 Дуоҳо</button>
+        <button onclick="switchTab('tasbih')" role="tab" aria-selected="false" aria-controls="pageTasbih">📿 Тасбеҳ</button>
+        <button onclick="switchTab('settings')" role="tab" aria-selected="false" aria-controls="pageSettings" aria-label="Танзимот">⚙️</button>
+    </nav>
 
     <header>
         <img src="icon-192.png" class="header-logo" alt="Тақвим">
@@ -753,7 +799,7 @@
     <button class="install-btn" id="installBtn" onclick="installApp()">📲 Насб кардан</button>
 
     <!-- ==================== САҲИФАИ ТАҚВИМ ==================== -->
-    <div class="page active" id="pageCalendar">
+    <div class="page active" id="pageCalendar" role="tabpanel">
 
         <div class="today-card">
             <div class="day-name" id="dayName"></div>
@@ -797,7 +843,7 @@
     </div>
 
     <!-- ==================== САҲИФАИ НАМОЗ ==================== -->
-    <div class="page" id="pagePrayer">
+    <div class="page" id="pagePrayer" role="tabpanel">
 
         <!-- Намози оянда -->
         <div class="clock-card">
@@ -877,7 +923,7 @@
         <div class="qibla-card">
             <h2>🕋 Самти Қибла</h2>
 
-            <div class="qibla-compass">
+            <div class="qibla-compass" role="img" aria-label="Компаси Қибла — самти Каъба нишон дода мешавад">
                 <div class="compass-ring" id="compassRing">
                     <span class="compass-dir n">Ш</span>
                     <span class="compass-dir s">Ҷ</span>
@@ -907,7 +953,7 @@
     </div>
 
     <!-- ==================== САҲИФАИ ДУОҲО ==================== -->
-    <div class="page" id="pageDua">
+    <div class="page" id="pageDua" role="tabpanel">
 
         <div class="dua-header-card">
             <h2>📖 Дуоҳои Қуръонӣ</h2>
@@ -916,13 +962,13 @@
 
         <!-- Филтр -->
         <div class="dua-filter">
-            <button class="filter-btn active" onclick="filterDuas('all')">Ҳама</button>
-            <button class="filter-btn" onclick="filterDuas('daily')">Ҳаррӯза</button>
-            <button class="filter-btn" onclick="filterDuas('protection')">Муҳофизат</button>
-            <button class="filter-btn" onclick="filterDuas('forgiveness')">Истиғфор</button>
-            <button class="filter-btn" onclick="filterDuas('guidance')">Ҳидоят</button>
-            <button class="filter-btn" onclick="filterDuas('patience')">Сабр</button>
-            <button class="filter-btn" onclick="filterDuas('mosque')">Масҷид</button>
+            <button class="filter-btn active" onclick="filterDuas('all', this)">Ҳама</button>
+            <button class="filter-btn" onclick="filterDuas('daily', this)">Ҳаррӯза</button>
+            <button class="filter-btn" onclick="filterDuas('protection', this)">Муҳофизат</button>
+            <button class="filter-btn" onclick="filterDuas('forgiveness', this)">Истиғфор</button>
+            <button class="filter-btn" onclick="filterDuas('guidance', this)">Ҳидоят</button>
+            <button class="filter-btn" onclick="filterDuas('patience', this)">Сабр</button>
+            <button class="filter-btn" onclick="filterDuas('mosque', this)">Масҷид</button>
         </div>
 
         <div id="duaList"></div>
@@ -930,7 +976,7 @@
     </div>
 
     <!-- ==================== САҲИФАИ ТАСБЕҲ ==================== -->
-    <div class="page" id="pageTasbih">
+    <div class="page" id="pageTasbih" role="tabpanel">
         <h2 style="text-align:center; color:var(--green-dark); font-size:1.5rem; margin-bottom:20px;">📿 Тасбеҳ</h2>
 
         <div class="tasbih-dhikr-selector">
@@ -956,7 +1002,7 @@
             </div>
         </div>
 
-        <button class="tasbih-btn" id="tasbihBtn" onclick="tasbihClick()">
+        <button class="tasbih-btn" id="tasbihBtn" onclick="tasbihClick()" aria-label="Тасбеҳ — зер кунед барои шумориш">
             <span class="tasbih-btn-inner">📿</span>
         </button>
 
@@ -975,20 +1021,33 @@
     </div>
 
     <!-- ==================== САҲИФАИ НАСТРОЙКА ==================== -->
-    <div class="page" id="pageSettings">
+    <div class="page" id="pageSettings" role="tabpanel">
         <h2 style="text-align:center; color:var(--green-dark); font-size:1.5rem; margin-bottom:20px;">⚙️ Танзимот</h2>
+
+        <div class="settings-section">
+            <h3 class="settings-title">🌙 Ҳолати торик (Dark Mode)</h3>
+            <p class="settings-desc">Ранги пасзаминаро торик кунед барои роҳатии чашм дар шаб.</p>
+            <button class="settings-btn" id="darkModeBtn" onclick="toggleDarkMode()">🌙 Фаъол кардани ҳолати торик</button>
+        </div>
 
         <div class="settings-section">
             <h3 class="settings-title">🔄 Навсозии приложения</h3>
             <p class="settings-desc">Агар приложения навсозӣ нашуда бошад, ин тугмаро зер кунед:</p>
             <button class="settings-btn update-btn" onclick="forceUpdate()">🔄 Навсозӣ кардан (Обновить)</button>
-            <div class="settings-version" id="appVersion">Версияи ҳозира: 2.0</div>
+            <div class="settings-version" id="appVersion">Версияи ҳозира: 2.1</div>
         </div>
 
         <div class="settings-section">
             <h3 class="settings-title">🗑️ Пок кардани кэш</h3>
             <p class="settings-desc">Ҳамаи маълумоти кэшро пок мекунад ва приложенияро аз нав бор мекунад.</p>
             <button class="settings-btn" onclick="clearAllCache()">🗑️ Пок кардани кэш</button>
+        </div>
+
+        <div class="settings-section">
+            <h3 class="settings-title">🔔 Огоҳиномаи намоз</h3>
+            <p class="settings-desc">Ҳангоми расидани вақти намоз огоҳинома (notification) мегиред.</p>
+            <button class="settings-btn" id="notifBtn" onclick="toggleNotifications()">🔔 Фаъол кардани огоҳинома</button>
+            <div class="settings-version" id="notifStatus"></div>
         </div>
 
         <div class="settings-section">
@@ -1007,7 +1066,7 @@
                 <div>🕌 Вақтҳои намоз ва Қибла</div>
                 <div>📖 Дуоҳои Қуръонӣ ва Ҳадис</div>
                 <div>📿 Тасбеҳи рақамӣ</div>
-                <div style="margin-top:10px; color:#888;">Версияи 2.0 — 2026</div>
+                <div style="margin-top:10px; color:#888;">Версияи 2.1 — 2026</div>
                 <div style="color:#888;">Барои мусулмонони тоҷик</div>
             </div>
         </div>
@@ -1017,7 +1076,7 @@
     <footer>
         <div class="footer-bismillah">﷽</div>
         <div>Тақвими Мусалмон — Барои мусулмонони тоҷик</div>
-        <div class="footer-version">Версияи 2.0</div>
+        <div class="footer-version">Версияи 2.1</div>
     </footer>
 
     <script>
@@ -1030,15 +1089,23 @@
             document.getElementById('pageTasbih').classList.toggle('active', tab === 'tasbih');
             document.getElementById('pageSettings').classList.toggle('active', tab === 'settings');
             let btns = document.querySelectorAll('.tab-bar button');
-            btns[0].classList.toggle('active', tab === 'calendar');
-            btns[1].classList.toggle('active', tab === 'prayer');
-            btns[2].classList.toggle('active', tab === 'dua');
-            btns[3].classList.toggle('active', tab === 'tasbih');
-            btns[4].classList.toggle('active', tab === 'settings');
+            let tabs = ['calendar','prayer','dua','tasbih','settings'];
+            btns.forEach((b, i) => {
+                let isActive = tab === tabs[i];
+                b.classList.toggle('active', isActive);
+                b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+            });
             if (tab === 'prayer') { showPrayerDate(); showPrayers(); showWeek(); updateClock(); initQibla(); }
             if (tab === 'dua') { renderDuas(); }
             if (tab === 'tasbih') { loadTasbihState(); }
             window.scrollTo(0, 0);
+        }
+
+        // ===================== ВАҚТИ ТОҶИКИСТОН (UTC+5) =====================
+        function getTajikistanNow() {
+            let now = new Date();
+            let utc = now.getTime() + now.getTimezoneOffset() * 60000;
+            return new Date(utc + 5 * 3600000);
         }
 
         // ===================== УМУМӢ =====================
@@ -1108,7 +1175,7 @@
         }
 
         // ===================== ТАҚВИМ =====================
-        let today = new Date();
+        let today = getTajikistanNow();
         let todayHijri = gregorianToHijri(today.getFullYear(), today.getMonth()+1, today.getDate());
         let currentViewYear = todayHijri.year;
         let currentViewMonth = todayHijri.month;
@@ -1309,7 +1376,7 @@
 
         // ===================== НАМОЗИ ОЯНДА =====================
         function updateClock() {
-            let now = new Date();
+            let now = getTajikistanNow();
             let currentHour = now.getHours() + now.getMinutes() / 60 + now.getSeconds() / 3600;
             let city = CITIES[currentCity];
             let times = calculatePrayer(now, city.lat, city.lng, city.tz);
@@ -1344,7 +1411,7 @@
                 document.getElementById('clockDate').textContent = 'Баъди ' + remaining;
             } else {
                 // Баъди Хуфтан — намози оянда Субҳи пагоҳ
-                let tomorrow = new Date(now);
+                let tomorrow = new Date(now.getTime());
                 tomorrow.setDate(now.getDate() + 1);
                 let tomorrowTimes = calculatePrayer(tomorrow, city.lat, city.lng, city.tz);
                 document.getElementById('clockCity').textContent = '🌙 Намози оянда: Субҳ (пагоҳ)';
@@ -1587,7 +1654,7 @@
         }
 
         function showPrayerDate() {
-            let now = new Date();
+            let now = getTajikistanNow();
             document.getElementById('prayerDate').textContent =
                 WEEK_DAYS_FULL[now.getDay()]+', '+now.getDate()+' '+MILADI_MONTHS[now.getMonth()]+' '+now.getFullYear();
             let h = gregorianToHijri(now.getFullYear(), now.getMonth()+1, now.getDate());
@@ -1596,7 +1663,7 @@
         }
 
         function showPrayers() {
-            let city = CITIES[currentCity], now = new Date();
+            let city = CITIES[currentCity], now = getTajikistanNow();
             let times = calculatePrayer(now, city.lat, city.lng, city.tz);
 
             document.getElementById('timeFajr').textContent = formatTime(times.fajr);
@@ -1623,7 +1690,7 @@
         function showWeek() {
             let body = document.getElementById('weekBody');
             body.innerHTML = '';
-            let city = CITIES[currentCity], now = new Date(), todayStr = now.toDateString();
+            let city = CITIES[currentCity], now = getTajikistanNow(), todayStr = now.toDateString();
             let start = new Date(now);
             start.setDate(now.getDate() - now.getDay());
 
@@ -1662,7 +1729,7 @@
             navigator.serviceWorker.register('sw.js').then(reg => { reg.update(); });
             if ('caches' in window) {
                 caches.keys().then(keys => {
-                    keys.forEach(key => { if (key !== 'islamic-calendar-v7') caches.delete(key); });
+                    keys.forEach(key => { if (key !== 'islamic-calendar-v8') caches.delete(key); });
                 });
             }
         }
@@ -1884,10 +1951,10 @@
         let currentDuaFilter = 'all';
         const CAT_NAMES = { daily:'Ҳаррӯза', protection:'Муҳофизат', forgiveness:'Истиғфор', guidance:'Ҳидоят', patience:'Сабр', mosque:'Масҷид' };
 
-        function filterDuas(cat) {
+        function filterDuas(cat, btn) {
             currentDuaFilter = cat;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+            btn.classList.add('active');
             renderDuas();
         }
 
@@ -1933,6 +2000,17 @@
             document.querySelectorAll('.show-tip').forEach(c => c.classList.remove('show-tip'));
         });
 
+        // Тасбеҳ бо клавиатура (Space ё Enter)
+        document.addEventListener('keydown', function(e) {
+            let activePage = document.getElementById('pageTasbih');
+            if (!activePage.classList.contains('active')) return;
+            if (e.code === 'Space' || e.code === 'Enter') {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+                e.preventDefault();
+                tasbihClick();
+            }
+        });
+
         // ===================== ТАСБЕҲ =====================
         const DHIKR_LIST = [
             { arabic: 'سُبْحَانَ اللَّهِ', tajik: 'Субҳоналлоҳ — Пок аст Худо', target: 33 },
@@ -1951,6 +2029,12 @@
         let tasbihSound = true;
         let tasbihTotalAll = 0;
         let tasbihHistory = [];
+        let audioCtx = null;
+        function getAudioCtx() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
 
         function loadTasbihState() {
             try {
@@ -2006,7 +2090,7 @@
 
             if (tasbihSound) {
                 try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const ctx = getAudioCtx();
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.connect(gain);
@@ -2103,11 +2187,105 @@
             window.location.reload(true);
         }
 
+        // ===================== ҲОЛАТИ ТОРИК (DARK MODE) =====================
+        let darkMode = localStorage.getItem('dark_mode') === 'true';
+        function applyDarkMode() {
+            document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+            let btn = document.getElementById('darkModeBtn');
+            if (btn) btn.textContent = darkMode ? '☀️ Ғайрифаъол кардани ҳолати торик' : '🌙 Фаъол кардани ҳолати торик';
+            // meta theme-color навсозӣ
+            let meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.content = darkMode ? '#1a1a2e' : '#1a5e3a';
+        }
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            localStorage.setItem('dark_mode', darkMode.toString());
+            applyDarkMode();
+        }
+        applyDarkMode();
+
+        // ===================== ОГОҲИНОМАИ НАМОЗ =====================
+        let notificationsEnabled = localStorage.getItem('notif_enabled') === 'true';
+        let lastNotifiedPrayer = '';
+
+        function updateNotifUI() {
+            let btn = document.getElementById('notifBtn');
+            let status = document.getElementById('notifStatus');
+            if (!('Notification' in window)) {
+                btn.textContent = '🔔 Огоҳинома дастрас нест';
+                btn.disabled = true;
+                status.textContent = 'Браузери шумо огоҳиномаро дастгирӣ намекунад';
+                return;
+            }
+            if (notificationsEnabled && Notification.permission === 'granted') {
+                btn.textContent = '🔕 Ғайрифаъол кардани огоҳинома';
+                status.textContent = '✅ Огоҳинома фаъол аст';
+                status.style.color = 'var(--green-main)';
+            } else {
+                btn.textContent = '🔔 Фаъол кардани огоҳинома';
+                status.textContent = notificationsEnabled ? '⚠️ Иҷозат рад шудааст' : '';
+                status.style.color = '#888';
+            }
+        }
+
+        function toggleNotifications() {
+            if (!('Notification' in window)) return;
+            if (notificationsEnabled) {
+                notificationsEnabled = false;
+                localStorage.setItem('notif_enabled', 'false');
+                updateNotifUI();
+                return;
+            }
+            Notification.requestPermission().then(function(perm) {
+                if (perm === 'granted') {
+                    notificationsEnabled = true;
+                    localStorage.setItem('notif_enabled', 'true');
+                    new Notification('Тақвими Мусалмон', { body: 'Огоҳиномаи намоз фаъол шуд!', icon: 'icon-192.png' });
+                }
+                updateNotifUI();
+            });
+        }
+
+        function checkPrayerNotification() {
+            if (!notificationsEnabled || Notification.permission !== 'granted') return;
+            let now = getTajikistanNow();
+            let city = CITIES[currentCity];
+            let times = calculatePrayer(now, city.lat, city.lng, city.tz);
+            let currentMin = now.getHours() * 60 + now.getMinutes();
+
+            let prayers = [
+                { name: 'Субҳ (Фаҷр)', time: times.fajr, icon: '🌙' },
+                { name: 'Пешин (Зуҳр)', time: times.dhuhr, icon: '☀️' },
+                { name: 'Аср (Дигар)', time: times.asr, icon: '🌤' },
+                { name: 'Шом (Мағриб)', time: times.maghrib, icon: '🌇' },
+                { name: 'Хуфтан (Ишо)', time: times.isha, icon: '🌃' },
+            ];
+
+            for (let p of prayers) {
+                if (p.time === null) continue;
+                let pMin = Math.floor(p.time) * 60 + Math.round((p.time % 1) * 60);
+                let key = now.toDateString() + '_' + p.name;
+                if (currentMin >= pMin && currentMin <= pMin + 1 && lastNotifiedPrayer !== key) {
+                    lastNotifiedPrayer = key;
+                    new Notification('🕌 Вақти намоз расид!', {
+                        body: p.icon + ' ' + p.name + ' — ' + formatTime(p.time),
+                        icon: 'icon-192.png',
+                        tag: 'prayer-' + p.name
+                    });
+                    break;
+                }
+            }
+        }
+
+        // Ҳар 30 сония тафтиш
+        setInterval(checkPrayerNotification, 30000);
+
         // ===================== ОҒОЗ =====================
         initYearSelect();
         showToday();
         renderCalendar();
         renderHolidays();
+        updateNotifUI();
 
         setInterval(() => { updateClock(); showPrayers(); }, 1000);
     </script>

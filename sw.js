@@ -1,8 +1,7 @@
-const CACHE_NAME = 'islamic-calendar-v7';
+const CACHE_NAME = 'islamic-calendar-v8';
 const ASSETS = [
     './',
     './index.html',
-    './namoz.html',
     './manifest.json',
     './icon-192.png',
     './icon-512.png'
@@ -35,7 +34,11 @@ self.addEventListener('fetch', event => {
 
     // API дархостҳоро ҲЕҶ ГОҲ кэш накун — ҳамеша аз шабака гир
     if (url.hostname !== location.hostname) {
-        event.respondWith(fetch(event.request));
+        event.respondWith(
+            fetch(event.request).catch(() => {
+                return new Response('Offline', { status: 503 });
+            })
+        );
         return;
     }
 
